@@ -1,0 +1,7 @@
+text other_text "text\ntext\"text"
+Identifier otherIdentifier "Identifier\nIdentifier\"otherIdentifier"
+UnquotedText otherUnquotedText "UnquotedText\"UnquotedText\"otherUnquotedText"
+Unquotedidentifier otherUnquoteddentifier "Unquotedidentifier\nUnquotedidentifier\"otherUnquotedidentifier"
+QuotedText otherQuotedText "QuotedText\nQuotedText\"otherQuotedText"
+QuotedIDENTIFIER otherQuotedIDENTIFIER "QuotedIDENTIFIER\nQuotedIDENTIFIER\"otherQuotedIDENTIFIER"
+This Is A Tab!

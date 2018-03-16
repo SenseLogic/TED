@@ -1,0 +1,30 @@
+SetInputFolder IN/
+SetOutputFolder OUT/
+
+ReadFiles /*.hpp
+
+SetTabulationSpaceCount 4
+ReplaceTabulations 0 $
+RemoveLastSpaces 0 $
+RemoveLastEmptyLines 0 $
+AddEmptyLines $ 1
+
+IgnoreFirstSpaces
+IgnoreLastSpaces
+FindLines% 0 $
+    `#ifndef __\Uib_HPP__`
+    `#define __\Uib_HPP__`
+FindLines~% 0 $
+    `#ifndef __\Uib__`
+    `#define __\Uib__`
+SetLines^ [ ]
+    #pragma once
+RemoveFirstSpaces^ 0 $ 4
+FindLines^% $-2 1
+    #endif
+RemoveLines^ [ ]
+
+PrintLines
+
+CreateFolders
+WriteFiles

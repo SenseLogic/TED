@@ -1,0 +1,39 @@
+SetInputFolder IN/
+SetOutputFolder OUT/
+
+ReadFiles /test.txt
+
+ReplaceText 0 $
+    text
+    replaced_text
+ReplaceIdentifier 0 $
+    Identifier
+    ReplacedIdentifier
+ReplaceUnquotedText 0 $
+    UnquotedText
+    ReplacedUnquotedText
+ReplaceUnquotedIdentifier 0 $
+    Unquotedidentifier
+    ReplacedUnquotedidentifier
+ReplaceQuotedText 0 $
+    QuotedText
+    ReplacedQuotedText
+ReplaceQuotedIdentifier 0 $
+    QuotedIDENTIFIER
+    ReplacedQuotedIDENTIFIER
+ReplaceText 0 $
+    This Is
+    ``
+ReplaceText 0 $
+    A Tab
+    `\tTAB INSERTED HERE `
+
+SetFilePath `\op\ob.out`
+
+Print! `Processed files (\iP => \oP) :`
+Print `\is\in : \if (\ip\in) => \of (\op\ob\oe)`
+
+PrintLines
+
+CreateFolders
+WriteFiles

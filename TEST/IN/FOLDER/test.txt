@@ -1,0 +1,7 @@
+text
+Identifier
+UnquotedText
+Unquotedidentifier
+"QuotedText"
+"QuotedIDENTIFIER"
+A Tab!

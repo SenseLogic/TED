@@ -1,0 +1,24 @@
+SetInputFolder IN/
+SetOutputFolder OUT/
+
+ReadFiles /*.txt
+SelectFiles
+    /*_a.txt
+    FOLDER//*_b.txt
+ReplaceText^ 0 $
+    A
+    1
+SelectFiles^ FOLDER//test_*.txt
+ReplaceText^ 0 $
+    B
+    2
+IgnoreFiles^ FOLDER/test_*.txt
+ReplaceText^ 0 $
+    C
+    3
+
+PrintChangedLines
+
+SelectFiles /test_*.txt
+CreateFolders^
+WriteFiles^

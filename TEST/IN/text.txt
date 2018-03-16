@@ -1,0 +1,31 @@
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+This is the old text
+Here
+The old text is also replaced here
+But
+This old text is not replaced
+    However
+        These
+            Lines
+                Are
+                    Replaced
+{   *** start ***
+    These lines
+    are removed
+}   *** end ***
+Start
+    someVariable
+        = someVariable + 1;
+    someOtherVariable
+        = someOtherVariable + 1;
+End
+The end.

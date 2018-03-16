@@ -1,0 +1,75 @@
+SetInputFolder IN/
+SetOutputFolder OUT/
+
+ReadFiles /*.hpp
+PrintLines
+
+IgnoreSideSpaces
+RemoveLastEmptyLines 0 $
+AddEmptyLines $ 1
+
+FindLines% 0 $
+    `#ifndef __\Uib_HPP__`
+    `#define __\Uib_HPP__`
+FindLines~% 0 $
+    `#ifndef __\Uib__`
+    `#define __\Uib__`
+CopyLines^ a [ ]
+Set^ a := `\U%a`
+PasteLines^ a ]
+
+Print! `Found :`
+Print^ a
+Print^ `\%a`
+
+Call! TestIntegers 456
+Call! TestLists
+Call! TestLoops 10
+
+PrintLines
+
+Exit
+
+##
+
+:TestIntegers
+
+Set! value = 123
+Set! value += %0
+Print! value
+
+Return
+
+##
+
+:TestLists
+
+Set! file_name_list = ``
+Set file_name_list $= `\in`
+
+Print! file_name_list
+
+Return
+
+##
+
+:TestLoops
+
+Set! index = 0
+
+:loop
+Set! index += 1
+Print! index
+Go! loop index < %0
+
+FindText% 0 $
+    #
+PrintRanges
+ReplaceText [ ]
+    #
+    @
+
+PrintLines
+
+Return
+

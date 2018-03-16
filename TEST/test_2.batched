@@ -1,0 +1,64 @@
+# this is a comment
+
+SetInputFolder IN/
+SetOutputFolder OUT/
+
+ReadFiles text.txt
+
+IgnoreFirstSpaces
+IgnoreInnerSpaces
+IgnoreLastSpaces
+SetTabulationSpaceCount 4
+
+PrintLines
+
+AddLines 5
+    This
+    Has
+    Been
+    Added
+FindText 0 $
+    old text
+ReplaceText [ ]+3
+    old text
+    new text
+FindLines 0 $
+    These
+    Lines
+    Are
+    Replaced
+SetLines [ ]
+    `\ This`
+    `\ \bIs`
+    `\ \b\bThe`
+    `\ \b\b\bNew`
+    `\ \dText`
+FindLines ] $
+    { *** start ***
+ReachLines $
+    } *** end ***
+RemoveLines [+1 ]-1
+FindExpressions ] $
+    ^Start
+ReachExpressions $
+    End$
+ReplaceExpression [ ]
+    ([a-z0-9])([A-Z])
+    $1_$2
+AddLines ]-3
+    `    // inserted here`
+ReplaceText 0 $
+    `inserted `
+    ``
+ReplaceText 0 $
+    `   // here`
+    `\t// TAB INSERTED HERE !`
+ReplaceText ]-6 1
+    !
+    !!!
+
+PrintSelectedLines
+PrintChangedLines
+PrintLines
+
+WriteFiles

@@ -1,0 +1,35 @@
+1
+2
+3
+4
+5
+This
+Has
+Been
+Added
+6
+7
+8
+9
+10
+This is the new text
+Here
+The new text is also replaced here
+But
+This old text is not replaced
+    However
+        This
+       Is
+      The
+     New
+    Text
+{   *** start ***
+}   *** end ***
+Start
+    some_Variable
+        = some_Variable + 1;
+ 	// TAB INSERTED HERE !
+    some_Other_Variable
+        = some_Other_Variable + 1;
+End
+The end.

@@ -1,0 +1,7 @@
+replaced_text other_replaced_text "replaced_text\nreplaced_text\"replaced_text"
+ReplacedIdentifier otherIdentifier "ReplacedIdentifier\nIdentifier\"otherIdentifier"
+ReplacedUnquotedText otherReplacedUnquotedText "UnquotedText\"UnquotedText\"otherUnquotedText"
+ReplacedUnquotedidentifier otherUnquoteddentifier "Unquotedidentifier\nUnquotedidentifier\"otherUnquotedidentifier"
+QuotedText otherQuotedText "ReplacedQuotedText\nReplacedQuotedText\"otherReplacedQuotedText"
+QuotedIDENTIFIER otherQuotedIDENTIFIER "ReplacedQuotedIDENTIFIER\nReplacedQuotedIDENTIFIER\"otherQuotedIDENTIFIER"
+ 	TAB INSERTED HERE !
