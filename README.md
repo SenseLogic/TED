@@ -143,7 +143,7 @@ Return
 Exit
 Include script_file_path
 Execute script_file_path {arguments}
-Do command {arguments}
+Do shell_command {arguments}
 ```
 
 ### Command modifiers
