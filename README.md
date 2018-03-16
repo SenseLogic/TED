@@ -211,8 +211,8 @@ index : line index (starting at 0)
 [+offset : positive offset to the start of selection
 [-offset : negative offset to the start of selection
 ] : end of selection
-]+offset : negative offset to the end of selection
-]-offset : positive offset to the end of selection
+]+offset : positive offset to the end of selection
+]-offset : negative offset to the end of selection
 $ : end of file
 $-offset : negative offset to the end of file
 ```
