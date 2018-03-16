@@ -2248,7 +2248,7 @@ class SCRIPT
                                         LineArray[ $ - 1 ] ~= line[ ++character_index ];
                                     }
 
-                                    if ( "#%".indexOf( line[ character_index ] >= 0 )
+                                    if ( "$%".indexOf( line[ character_index ] >= 0 )
                                          && character_index + 1 < line.length )
                                     {
                                         LineArray[ $ - 1 ] ~= line[ ++character_index ];
@@ -5942,7 +5942,7 @@ class SCRIPT
                     {
                         FilesMustBeMarked = true;
                     }
-                    else if ( character == ':' )
+                    else if ( character == '.' )
                     {
                         FilesMustNotBeMarked = true;
                     }

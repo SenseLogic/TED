@@ -154,7 +154,7 @@ Do shell_command {arguments}
 ~ : process only the ignored files
 # : mark the matching files
 ? : process only the marked files
-\ : process only the unmarked files
+. : process only the unmarked files
 ! : don't process the files
 ```
 
@@ -188,7 +188,7 @@ Do shell_command {arguments}
 `\^` : selected input file paths
 `\~` : ignored input file paths
 `\?` : marked input file paths
-`\:` : unmarked input file paths
+`\.` : unmarked input file paths
 `\$0` to `\$9` : script arguments
 `\%0` to `\%9` : function arguments
 `\$a` to `\$z` : script variables
