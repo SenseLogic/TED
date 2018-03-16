@@ -244,7 +244,7 @@ $= : append
 >>= : right shift
 ```
 
-### Operators
+### Comparison operators
 
 ```
 < : lower
@@ -253,6 +253,11 @@ $= : append
 != : not equal
 >= : higher or equal
 > : higher
+```
+
+### Arithmetic operators
+
+```
 + : add
 - : substract
 * : multiplay
