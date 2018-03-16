@@ -247,12 +247,22 @@ $= : append
 ### Operators
 
 ```
-<
-<=
-==
-!=
->=
->
+< : lower
+<= : lower or equal
+== : equal
+!= : not equal
+>= : higher or equal
+> : higher
++ : add
+- : substract
+* : multiplay
+/ : divide
+% : modulo
+& : binary and
+| : binary or
+^ : binary xor
+<< : left shift
+>> : right shift
 ```
 
 ### Comment
