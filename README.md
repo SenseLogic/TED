@@ -6,7 +6,7 @@ Batch text file editor.
 
 ## Description
 
-Batched allows to apply lists of text editing operations on several files at once.
+Batched allows to conditionally apply text editing operations on several files at once.
 
 ## Sample
 
