@@ -184,11 +184,6 @@ Do shell_command {arguments}
 `\M` : convert to majorcase
 `\C` : convert to camelcase
 `\S` : convert to snakecase
-`\&` : all input file paths
-`\^` : selected input file paths
-`\~` : ignored input file paths
-`\?` : marked input file paths
-`\.` : unmarked input file paths
 `\$0` to `\$9` : script arguments
 `\%0` to `\%9` : function arguments
 `\$a` to `\$z` : script variables
