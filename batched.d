@@ -2158,7 +2158,14 @@ class SCRIPT
         string message
         )
     {
-        writeln( "*** ERROR : ", FilePathArray[ LineIndex ], "(", LineIndexArray[ LineIndex ], ") : ", message );
+        if ( LineIndex < LineArray.length )
+        {
+            writeln( "*** ERROR : ", FilePathArray[ LineIndex ], "(", LineIndexArray[ LineIndex ], ") : ", message );
+        }
+        else
+        {
+            writeln( "*** ERROR : ", message );
+        }
 
         exit( -1 );
     }
