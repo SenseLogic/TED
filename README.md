@@ -146,80 +146,12 @@ Execute script_file_path {arguments}
 Do shell_command {arguments}
 ```
 
-### Command modifiers
-
-```
-% : select the matching files
-^ : process only the selected files
-~ : process only the ignored files
-# : mark the matching files
-? : process only the marked files
-. : process only the unmarked files
-! : don't process the files
-```
-
-### File path filter
+### Filter
 
 ```
 * : zero, one or several unknown characters (*.txt)
 ? : one unknown character (*.?pp)
 // : in this folder and all of its subfolders (FOLDER//*.?pp)
-```
-
-### Quotation
-
-```
-`` : empty string
-`\\` : backslash
-`\`` : backtick
-`\r` : return
-`\n` : newline
-`\t` : tab
-`\d` : backtab
-`\b` : backspace
-`\ ` : line indentation
-`\@processor` : text processor
-`\$0\` ... : script argument
-`\$variable\` : script variable
-`\%0\` ... : function argument
-`\%variable\` : file variable
-```
-
-### Text processor
-
-```
-@Lower : lowercase
-@Upper : uppercase
-@Minor : minorcase
-@Major : majorcase
-@Camel : camelcase
-@Snake : snakecase
-```
-
-### Script variable
-
-```
-$InputFolder : input folder
-$OutputFolder : output folder
-```
-
-### File variable
-
-```
-%InputPath : input file path
-%InputFolder : input file folder
-%InputSubFolder : input file sub-folder 
-%InputName : input file name
-%InputBaseName : input file name without extension
-%InputExtension : input file extension
-%InputBaseExtension : input file extension without dot character
-%OutputPath : output file path
-%OutputFolder : output file folder
-%OutputSubFolder : output file sub-folder
-%OutputName : output file name
-%OutputBaseName : output file name without extension
-%OutputExtension : output file extension
-%OutputBaseExtension : output file extension without dot character
 ```
 
 ### Line index
@@ -244,7 +176,72 @@ $ : end of line
 $-offset : negative offset to the end of line
 ```
 
-### Assignment operator
+### Modifiers
+
+```
+% : select the matching files
+^ : process only the selected files
+~ : process only the ignored files
+# : mark the matching files
+? : process only the marked files
+. : process only the unmarked files
+! : don't process the files
+```
+
+### Escape sequences
+
+```
+`\\` : backslash
+`\`` : backtick
+`\r` : return
+`\n` : newline
+`\t` : tab
+`\d` : backtab
+`\b` : backspace
+`\ ` : line indentation
+`\@processor` : processor
+`\$0\` ... : script argument
+`\$variable\` : script variable
+`\%0\` ... : function argument
+`\%variable\` : file variable
+```
+
+### Processors
+
+```
+@Lower : lowercase
+@Upper : uppercase
+@Minor : minorcase
+@Major : majorcase
+@Camel : camelcase
+@Snake : snakecase
+```
+
+### Variables
+
+```
+$InputFolder : input folder
+$OutputFolder : output folder
+```
+
+```
+%InputPath : input file path
+%InputFolder : input file folder
+%InputSubFolder : input file sub-folder 
+%InputName : input file name
+%InputBaseName : input file name without extension
+%InputExtension : input file extension
+%InputBaseExtension : input file extension without dot character
+%OutputPath : output file path
+%OutputFolder : output file folder
+%OutputSubFolder : output file sub-folder
+%OutputName : output file name
+%OutputBaseName : output file name without extension
+%OutputExtension : output file extension
+%OutputBaseExtension : output file extension without dot character
+```
+
+### Operators
 
 ```
 := : set
@@ -263,8 +260,6 @@ $= : append
 >>= : right shift
 ```
 
-### Comparison operator
-
 ```
 < : lower
 <= : lower or equal
@@ -273,8 +268,6 @@ $= : append
 >= : higher or equal
 > : higher
 ```
-
-### Arithmetic operator
 
 ```
 + : add
