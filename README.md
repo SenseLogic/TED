@@ -199,11 +199,11 @@ $-offset : negative offset to the end of line
 `\d` : backtab
 `\b` : backspace
 `\ ` : line indentation
-`\@processor` : processor
-`\$0\` ... : script argument
-`\$variable\` : script variable
-`\%0\` ... : function argument
-`\%variable\` : file variable
+`\@name` : processor
+`\$index\` : script argument
+`\$name\` : script variable
+`\%index\` : function argument
+`\%name\` : file variable
 ```
 
 ### Processors
