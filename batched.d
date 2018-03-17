@@ -2433,10 +2433,10 @@ class SCRIPT
             character;
         long
             character_index,
-            filter_part_index,
+            processor_part_index,
             part_index;
         string
-            filter_part,
+            processor_part,
             part,
             unquoted_argument,
             value;
@@ -2557,40 +2557,40 @@ class SCRIPT
                                     }
                                 }
                                 
-                                for ( filter_part_index = part_index - 1;
-                                      filter_part_index >= 0
-                                      && part_array[ filter_part_index ][ 0 ] == '@';
-                                      --filter_part_index )
+                                for ( processor_part_index = part_index - 1;
+                                      processor_part_index >= 0
+                                      && part_array[ processor_part_index ][ 0 ] == '@';
+                                      --processor_part_index )
                                 {
-                                    filter_part = part_array[ filter_part_index ];
+                                    processor_part = part_array[ processor_part_index ];
                                     
-                                    if ( filter_part == "@Lower" )
+                                    if ( processor_part == "@Lower" )
                                     {
                                         value = GetLowerCaseText( value );
                                     }
-                                    else if ( filter_part == "@Upper" )
+                                    else if ( processor_part == "@Upper" )
                                     {
                                         value = GetUpperCaseText( value );
                                     }
-                                    else if ( filter_part == "@Minor" )
+                                    else if ( processor_part == "@Minor" )
                                     {
                                         value = GetMinorCaseText( value );
                                     }
-                                    else if ( filter_part == "@Major" )
+                                    else if ( processor_part == "@Major" )
                                     {
                                         value = GetMajorCaseText( value );
                                     }
-                                    else if ( filter_part == "@Camel" )
+                                    else if ( processor_part == "@Camel" )
                                     {
                                         value = GetCamelCaseText( value );
                                     }
-                                    else if ( filter_part == "@Snake" )
+                                    else if ( processor_part == "@Snake" )
                                     {
                                         value = GetSnakeCaseText( value );
                                     }
                                     else
                                     {
-                                        Abort( "Invalid escape sequence : " ~ filter_part );
+                                        Abort( "Invalid escape sequence : " ~ processor_part );
                                     }
                                 }
 

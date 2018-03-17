@@ -178,32 +178,48 @@ Do shell_command {arguments}
 `\d` : backtab
 `\b` : backspace
 `\ ` : line indentation
-`\@Lower\` : convert to lowercase
-`\@Upper\` : convert to uppercase
-`\@Minor\` : convert to minorcase
-`\@Major\` : convert to majorcase
-`\@Camel\` : convert to camelcase
-`\@Snake\` : convert to snakecase
+`\@processor` : text processor
 `\$0\` ... : script argument
-`\%0\` ... : function argument
 `\$variable\` : script variable
+`\%0\` ... : function argument
 `\%variable\` : file variable
-`\$InputFolder\` : input folder
-`\$OutputFolder\` : output folder
-`\%InputPath\` : input file path
-`\%OutputPath\` : output file path
-`\%InputFolder\` : input file folder
-`\%OutputFolder\` : output file folder
-`\%InputSubFolder\` : input file sub-folder 
-`\%OutputSubFolder\` : output file sub-folder
-`\%InputName\` : input file name
-`\%OutputName\` : output file name
-`\%InputBaseName\` : input file name without extension
-`\%OutputBaseName\` : output file name without extension
-`\%InputExtension\` : input file extension
-`\%OutputExtension\` : output file extension
-`\%InputBaseExtension\` : input file extension without dot character
-`\%OutputBaseExtension\` : output file extension without dot character
+```
+
+### Text processor
+
+```
+@Lower : lowercase
+@Upper : uppercase
+@Minor : minorcase
+@Major : majorcase
+@Camel : camelcase
+@Snake : snakecase
+```
+
+### Script variable
+
+```
+$InputFolder : input folder
+$OutputFolder : output folder
+```
+
+### File variable
+
+```
+%InputPath : input file path
+%InputFolder : input file folder
+%InputSubFolder : input file sub-folder 
+%InputName : input file name
+%InputBaseName : input file name without extension
+%InputExtension : input file extension
+%InputBaseExtension : input file extension without dot character
+%OutputPath : output file path
+%OutputFolder : output file folder
+%OutputSubFolder : output file sub-folder
+%OutputName : output file name
+%OutputBaseName : output file name without extension
+%OutputExtension : output file extension
+%OutputBaseExtension : output file extension without dot character
 ```
 
 ### Line index
@@ -228,7 +244,7 @@ $ : end of line
 $-offset : negative offset to the end of line
 ```
 
-### Assignment operators
+### Assignment operator
 
 ```
 := : set
@@ -247,7 +263,7 @@ $= : append
 >>= : right shift
 ```
 
-### Comparison operators
+### Comparison operator
 
 ```
 < : lower
@@ -258,7 +274,7 @@ $= : append
 > : higher
 ```
 
-### Arithmetic operators
+### Arithmetic operator
 
 ```
 + : add
