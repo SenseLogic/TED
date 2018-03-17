@@ -25,11 +25,11 @@ AddEmptyLines $ 1
 IgnoreFirstSpaces
 IgnoreLastSpaces
 FindLines% 0 $
-    `#ifndef __\Uib_HPP__`
-    `#define __\Uib_HPP__`
+    `#ifndef __\@Upper%InputBaseName\_HPP__`
+    `#define __\@Upper%InputBaseName\_HPP__`
 FindLines~% 0 $
-    `#ifndef __\Uib__`
-    `#define __\Uib__`
+    `#ifndef __\@Upper%InputBaseName\__`
+    `#define __\@Upper%InputBaseName\__`
 SetLines^ [ ]
     #pragma once
 RemoveFirstSpaces^ 0 $ 4
@@ -178,24 +178,32 @@ Do shell_command {arguments}
 `\d` : backtab
 `\b` : backspace
 `\ ` : line indentation
-`\L` : convert to lowercase
-`\U` : convert to uppercase
-`\N` : convert to minorcase
-`\M` : convert to majorcase
-`\C` : convert to camelcase
-`\S` : convert to snakecase
-`\$0` to `\$9` : script arguments
-`\%0` to `\%9` : function arguments
-`\$a` to `\$z` : script variables
-`\%a` to `\%z` : file variables
-`\iP` `\oP` : input/output folder path
-`\if` `\of` : input/output file path
-`\ip` `\op` : input/output file folder path
-`\is` `\os` : input/output file sub folder path
-`\in` `\on` : input/output file name
-`\ib` `\ob` : input/output file name without extension
-`\ie` `\oe` : input/output file extension
-`\ix` `\ox` : input/output file extension without dot character
+`\@Lower\` : convert to lowercase
+`\@Upper\` : convert to uppercase
+`\@Minor\` : convert to minorcase
+`\@Major\` : convert to majorcase
+`\@Camel\` : convert to camelcase
+`\@Snake\` : convert to snakecase
+`\$0\` ... : script argument
+`\%0\` ... : function argument
+`\$variable\` : script variable
+`\%variable\` : file variable
+`\$InputFolder\` : input folder
+`\$OutputFolder\` : output folder
+`\%InputPath\` : input file path
+`\%OutputPath\` : output file path
+`\%InputFolder\` : input file folder
+`\%OutputFolder\` : output file folder
+`\%InputSubFolder\` : input file sub-folder 
+`\%OutputSubFolder\` : output file sub-folder
+`\%InputName\` : input file name
+`\%OutputName\` : output file name
+`\%InputBaseName\` : input file name without extension
+`\%OutputBaseName\` : output file name without extension
+`\%InputExtension\` : input file extension
+`\%OutputExtension\` : output file extension
+`\%InputBaseExtension\` : input file extension without dot character
+`\%OutputBaseExtension\` : output file extension without dot character
 ```
 
 ### Line index

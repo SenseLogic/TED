@@ -73,18 +73,20 @@ class FILE
     // -- ATTRIBUTES
 
     string
-        SubFolderPath,
-        InputFilePath,
+        InputPath,
         InputFolderPath,
-        InputFileName,
+        InputName,
+        InputSubFolderPath,
         InputBaseName,
-        InputFileExtension,
-        OutputFilePath,
+        InputExtension,
+        InputBaseExtension,
+        OutputPath,
         OutputFolderPath,
-        OutputFileName,
+        OutputName,
         OutputSubFolderPath,
         OutputBaseName,
-        OutputFileExtension;
+        OutputExtension,
+        OutputBaseExtension;
     string[]
         LineArray;
     bool[]
@@ -243,7 +245,7 @@ class FILE
             ( InputFolderPath == folder_path
               || ( span_mode == SpanMode.depth
                    && InputFolderPath.startsWith( folder_path ) ) )
-            && InputFileName.globMatch( file_name_filter );
+            && InputName.globMatch( file_name_filter );
     }
 
     // -- OPERATIONS
@@ -252,7 +254,7 @@ class FILE
         string message
         )
     {
-        writeln( "*** ERROR : ", message, " (", InputFilePath, " => ", OutputFilePath, ")" );
+        writeln( "*** ERROR : ", message, " (", InputPath, " => ", OutputPath, ")" );
 
         exit( -1 );
     }
@@ -352,10 +354,10 @@ class FILE
 
         if ( input_file_path.exists() )
         {
-            SetInputFilePath( input_file_path );
-            SetOutputFilePath( output_file_path );
+            SetInputPath( input_file_path );
+            SetOutputPath( output_file_path );
 
-            writeln( "Reading file : ", InputFilePath );
+            writeln( "Reading file : ", InputPath );
 
             try
             {
@@ -363,7 +365,7 @@ class FILE
             }
             catch ( FileException file_exception )
             {
-                Abort( "Can't read file : " ~ InputFilePath );
+                Abort( "Can't read file : " ~ InputPath );
             }
 
             LineArray = file_text.split( '\n' );
@@ -373,7 +375,7 @@ class FILE
         }
         else
         {
-            Abort( "Can't read file : " ~ InputFilePath );
+            Abort( "Can't read file : " ~ InputPath );
         }
     }
 
@@ -384,38 +386,75 @@ class FILE
         string output_file_path
         )
     {
-        SetInputFilePath( input_file_path );
-        SetOutputFilePath( output_file_path );
+        SetInputPath( input_file_path );
+        SetOutputPath( output_file_path );
     }
 
     // ~~
 
-    void SetInputFilePath(
+    void SetInputPath(
         string input_file_path
         )
     {
-        SubFolderPath = input_file_path[ Script.InputFolderPath.length .. $ ].GetFolderPath();
-        InputFilePath = input_file_path;
+        InputPath = input_file_path;
 
-        SplitFilePath( InputFilePath, InputFolderPath, InputFileName );
-        SplitFileName( InputFileName, InputBaseName, InputFileExtension );
+        SplitFilePath( InputPath, InputFolderPath, InputName );
+        SplitFileName( InputName, InputBaseName, InputExtension );
+        
+        InputBaseExtension = InputExtension.replace( ".", "" );
+        
+        if ( InputFolderPath.startsWith( Script.InputFolderPath ) )
+        {
+            InputSubFolderPath = InputFolderPath[ Script.InputFolderPath.length .. $ ];
+        }
+        else
+        {
+            InputSubFolderPath = "";
+        }
+        
+        VariableMap[ "InputPath" ] = InputPath;
+        VariableMap[ "InputFolder" ] = InputFolderPath;
+        VariableMap[ "InputSubFolder" ] = InputSubFolderPath;
+        VariableMap[ "InputName" ] = InputName;
+        VariableMap[ "InputBaseName" ] = InputBaseName;
+        VariableMap[ "InputExtension" ] = InputExtension;
+        VariableMap[ "InputBaseExtension" ] = InputBaseExtension;
     }
 
     // ~~
 
-    void SetOutputFilePath(
+    void SetOutputPath(
         string output_file_path
         )
     {
-        OutputFilePath = output_file_path;
+        OutputPath = output_file_path;
 
-        SplitFilePath( OutputFilePath, OutputFolderPath, OutputFileName );
-        SplitFileName( OutputFileName, OutputBaseName, OutputFileExtension );
+        SplitFilePath( OutputPath, OutputFolderPath, OutputName );
+        SplitFileName( OutputName, OutputBaseName, OutputExtension );        
+        
+        OutputBaseExtension = OutputExtension.replace( ".", "" );
+        
+        if ( OutputFolderPath.startsWith( Script.OutputFolderPath ) )
+        {
+            OutputSubFolderPath = OutputFolderPath[ Script.OutputFolderPath.length .. $ ];
+        }
+        else
+        {
+            OutputSubFolderPath = "";
+        }
+        
+        VariableMap[ "OutputPath" ] = OutputPath;
+        VariableMap[ "OutputFolder" ] = OutputFolderPath;
+        VariableMap[ "OutputSubFolder" ] = OutputSubFolderPath;
+        VariableMap[ "OutputName" ] = OutputName;
+        VariableMap[ "OutputBaseName" ] = OutputBaseName;
+        VariableMap[ "OutputExtension" ] = OutputExtension;
+        VariableMap[ "OutputBaseExtension" ] = OutputBaseExtension;
     }
 
     // ~~
 
-    void CreateOutputFolder(
+    void CreateFolder(
         )
     {
         Script.CreateFolder( OutputFolderPath );
@@ -423,7 +462,7 @@ class FILE
 
     // ~~
 
-    void WriteOutputFile(
+    void WriteFile(
         )
     {
         string
@@ -431,17 +470,17 @@ class FILE
 
         file_text = LineArray.join( '\n' );
 
-        writeln( "Writing file : ", OutputFilePath );
+        writeln( "Writing file : ", OutputPath );
 
         if ( !PreviewOptionIsEnabled )
         {
             try
             {
-                OutputFilePath.write( file_text );
+                OutputPath.write( file_text );
             }
             catch ( FileException file_exception )
             {
-                Abort( "Can't write file : " ~ OutputFilePath );
+                Abort( "Can't write file : " ~ OutputPath );
             }
         }
     }
@@ -452,7 +491,7 @@ class FILE
         )
     {
         writeln(
-            InputFilePath,
+            InputPath,
             " ",
             ItIsSelected ? "^" : "",
             ItIsMarked ? "?" : "",
@@ -472,7 +511,7 @@ class FILE
         )
     {
         writeln(
-            InputFilePath,
+            InputPath,
             " ",
             ItIsSelected ? "^" : "",
             ItIsMarked ? "+" : "",
@@ -492,7 +531,7 @@ class FILE
         )
     {
         writeln(
-            InputFilePath,
+            InputPath,
             " ",
             ItIsSelected ? "^" : "",
             ItIsMarked ? "?" : "",
@@ -2242,16 +2281,17 @@ class SCRIPT
                                 {
                                     LineArray[ $ - 1 ] ~= line[ ++character_index ];
 
-                                    while ( "LUNMCS".indexOf( line[ character_index ] >= 0 )
-                                            && character_index + 1 < line.length )
+                                    if ( "@$%".indexOf( line[ character_index ] ) >= 0 )
                                     {
-                                        LineArray[ $ - 1 ] ~= line[ ++character_index ];
-                                    }
-
-                                    if ( "$%".indexOf( line[ character_index ] >= 0 )
-                                         && character_index + 1 < line.length )
-                                    {
-                                        LineArray[ $ - 1 ] ~= line[ ++character_index ];
+                                        while ( character_index + 1 < line.length )
+                                        {
+                                            LineArray[ $ - 1 ] ~= line[ ++character_index ];
+                                            
+                                            if ( line[ character_index ] == '\\' )
+                                            {
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -2389,19 +2429,19 @@ class SCRIPT
         FILE file = null
         )
     {
-        bool
-            it_is_input,
-            it_is_output,
-            it_is_lowercase,
-            it_is_uppercase;
         char
             character;
         long
-            character_index;
+            character_index,
+            filter_part_index,
+            part_index;
         string
-            filter_text,
+            filter_part,
+            part,
             unquoted_argument,
             value;
+        string[]
+            part_array;
 
         if ( QuotationIsEnabled
              && argument.length >= 2
@@ -2454,200 +2494,109 @@ class SCRIPT
                     {
                         unquoted_argument ~= file.Indentation;
                     }
-                    else
+                    else if ( "@$%".indexOf( character ) >= 0 )
                     {
-                        filter_text = "";
-
-                        while ( "LUNMCS".indexOf( character ) >= 0
-                                && character_index + 1 < argument.length )
+                        part_array = null;
+                        
+                        while ( character_index < argument.length )
                         {
-                            filter_text ~= character;
-
-                            character = argument[ ++character_index ];
-                        }
-
-                        it_is_input = false;
-                        it_is_output = false;
-
-                        if ( character == 'i'
-                             && character_index + 1 < argument.length )
-                        {
-                            it_is_input = true;
-
-                            character = argument[ ++character_index ];
-                        }
-                        else if ( character == 'o'
-                                  && character_index + 1 < argument.length )
-                        {
-                            it_is_output = true;
-
-                            character = argument[ ++character_index ];
-                        }
-
-                        if ( it_is_input
-                             || it_is_output )
-                        {
-                            if ( character == 'P' )
+                            character = argument[ character_index ];
+                            
+                            if ( character == '\\' )
                             {
-                                if ( it_is_input )
-                                {
-                                    value = InputFolderPath;
-                                }
-                                else
-                                {
-                                    value = OutputFolderPath;
-                                }
+                                break;
                             }
-                            else if ( file !is null )
+                            else 
                             {
-                                if ( character == 'f' )
+                                if ( "@$%".indexOf( character ) >= 0 )
                                 {
-                                    if ( it_is_input )
+                                    part_array ~= "";
+                                }
+                                
+                                part_array[ $ - 1 ] ~= character;
+                            }
+                            
+                            ++character_index;
+                        }
+                        
+                        for ( part_index = 0;
+                              part_index < part_array.length;
+                              ++part_index )
+                        {
+                            part = part_array[ part_index ];
+                            
+                            if ( part.length < 2 )
+                            {
+                                Abort( "Invalid escape sequence : " ~ part );
+                            }
+                            
+                            if ( part[ 0 ] != '@' )
+                            {
+                                if ( part[ 0 ] == '%' )
+                                {
+                                    if ( part[ 1 ] >= '0'
+                                         && part[ 1 ] <= '9' )
                                     {
-                                        value = file.InputFilePath;
+                                        value = GetFunctionArgument( part[ 1 .. $ ].GetInteger() );
                                     }
                                     else
                                     {
-                                        value = file.OutputFilePath;
+                                        value = GetVariable( part, file );
                                     }
                                 }
-                                else if ( character == 'p' )
+                                else if ( part[ 0 ] == '$' )
                                 {
-                                    if ( it_is_input )
+                                    if ( part[ 1 ] >= '0'
+                                         && part[ 1 ] <= '9' )
                                     {
-                                        value = file.InputFolderPath;
+                                        value = GetScriptArgument( part[ 1 .. $ ].GetInteger() );
                                     }
                                     else
                                     {
-                                        value = file.OutputFolderPath;
+                                        value = GetVariable( part, file );
                                     }
                                 }
-                                else if ( character == 's' )
+                                
+                                for ( filter_part_index = part_index - 1;
+                                      filter_part_index >= 0
+                                      && part_array[ filter_part_index ][ 0 ] == '@';
+                                      --filter_part_index )
                                 {
-                                    value = file.SubFolderPath;
-                                }
-                                else if ( character == 'n' )
-                                {
-                                    if ( it_is_input )
+                                    filter_part = part_array[ filter_part_index ];
+                                    
+                                    if ( filter_part == "@Lower" )
                                     {
-                                        value = file.InputFileName;
+                                        value = GetLowerCaseText( value );
+                                    }
+                                    else if ( filter_part == "@Upper" )
+                                    {
+                                        value = GetUpperCaseText( value );
+                                    }
+                                    else if ( filter_part == "@Minor" )
+                                    {
+                                        value = GetMinorCaseText( value );
+                                    }
+                                    else if ( filter_part == "@Major" )
+                                    {
+                                        value = GetMajorCaseText( value );
+                                    }
+                                    else if ( filter_part == "@Camel" )
+                                    {
+                                        value = GetCamelCaseText( value );
+                                    }
+                                    else if ( filter_part == "@Snake" )
+                                    {
+                                        value = GetSnakeCaseText( value );
                                     }
                                     else
                                     {
-                                        value = file.OutputFileName;
+                                        Abort( "Invalid escape sequence : " ~ filter_part );
                                     }
                                 }
-                                else if ( character == 'b' )
-                                {
-                                    if ( it_is_input )
-                                    {
-                                        value = file.InputBaseName;
-                                    }
-                                    else
-                                    {
-                                        value = file.OutputBaseName;
-                                    }
-                                }
-                                else if ( character == 'e' )
-                                {
-                                    if ( it_is_input )
-                                    {
-                                        value = file.InputFileExtension;
-                                    }
-                                    else
-                                    {
-                                        value = file.OutputFileExtension;
-                                    }
-                                }
-                                else if ( character == 'x' )
-                                {
-                                    if ( it_is_input )
-                                    {
-                                        value = file.InputFileExtension.replace( ".", "" );
-                                    }
-                                    else
-                                    {
-                                        value = file.OutputFileExtension.replace( ".", "" );
-                                    }
-                                }
-                                else
-                                {
-                                    Abort( "Invalid escape character : " ~ character );
-                                }
-                            }
-                            else
-                            {
-                                Abort( "Invalid escape character : " ~ character );
+
+                                unquoted_argument ~= value;
                             }
                         }
-                        else if ( character == '%'
-                                  && character_index + 1 < argument.length )
-                        {
-                            character = argument[ ++character_index ];
-
-                            if ( character >= '0'
-                                  && character <= '9' )
-                            {
-                                value = GetFunctionArgument( character - '0' );
-                            }
-                            else
-                            {
-                                value = GetVariable( "%" ~ character, file );
-                            }
-                        }
-                        else if ( character == '$'
-                                  && character_index + 1 < argument.length )
-                        {
-                            character = argument[ ++character_index ];
-
-                            if ( character >= '0'
-                                  && character <= '9' )
-                            {
-                                value = GetScriptArgument( character - '0' );
-                            }
-                            else
-                            {
-                                value = GetVariable( "$" ~ character, file );
-                            }
-                        }
-                        else
-                        {
-                            Abort( "Invalid escape character : " ~ character );
-                        }
-
-                        while ( filter_text.length > 0 )
-                        {
-                            character = filter_text[ 0 ];
-
-                            if ( character == 'L' )
-                            {
-                                value = GetLowerCaseText( value );
-                            }
-                            else if ( character == 'U' )
-                            {
-                                value = GetUpperCaseText( value );
-                            }
-                            else if ( character == 'N' )
-                            {
-                                value = GetMinorCaseText( value );
-                            }
-                            else if ( character == 'M' )
-                            {
-                                value = GetMajorCaseText( value );
-                            }
-                            else if ( character == 'C' )
-                            {
-                                value = GetCamelCaseText( value );
-                            }
-                            else if ( character == 'S' )
-                            {
-                                value = GetSnakeCaseText( value );
-                            }
-
-                            filter_text = filter_text[ 1 .. $ ];
-                        }
-
-                        unquoted_argument ~= value;
                     }
                 }
                 else
@@ -3567,6 +3516,9 @@ class SCRIPT
     {
         InputFolderPath = Unquote( GetArgument() );
         OutputFolderPath = InputFolderPath;
+        
+        VariableMap[ "InputFolder" ] = InputFolderPath;
+        VariableMap[ "OutputFolder" ] = OutputFolderPath;
     }
 
     // ~~
@@ -3575,6 +3527,8 @@ class SCRIPT
         )
     {
         InputFolderPath = Unquote( GetArgument() );
+        
+        VariableMap[ "InputFolder" ] = InputFolderPath;
     }
 
     // ~~
@@ -3583,6 +3537,8 @@ class SCRIPT
         )
     {
         OutputFolderPath = Unquote( GetArgument() );
+        
+        VariableMap[ "OutputFolder" ] = OutputFolderPath;
     }
 
     // ~~
@@ -3872,7 +3828,7 @@ class SCRIPT
             {
                 if ( file.IsSelected() )
                 {
-                    file.CreateOutputFolder();
+                    file.CreateFolder();
                 }
             }
         }
@@ -3898,7 +3854,7 @@ class SCRIPT
         {
             if ( file.IsSelected() )
             {
-                file.WriteOutputFile();
+                file.WriteFile();
             }
         }
 
@@ -4113,7 +4069,7 @@ class SCRIPT
         {
             if ( file.IsSelected() )
             {
-                file.SetOutputFilePath( Unquote( output_file_path_argument, file ) );
+                file.SetOutputPath( Unquote( output_file_path_argument, file ) );
             }
         }
     }

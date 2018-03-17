@@ -28,10 +28,10 @@ ReplaceText 0 $
     A Tab
     `\tTAB INSERTED HERE `
 
-SetFilePath `\op\ob.out`
+SetFilePath `\%OutputFolder%OutputBaseName\.out`
 
-Print! `Processed files (\iP => \oP) :`
-Print `\is\in : \if (\ip\in) => \of (\op\ob\oe)`
+Print! `Processed files (\$InputFolder\ => \$OutputFolder\) :`
+Print `\%InputSubFolder%InputName\ : \%InputPath\ (\%InputFolder%InputName\) => \%OutputPath\ (\%OutputFolder%OutputBaseName%OutputExtension\)`
 
 PrintLines
 
