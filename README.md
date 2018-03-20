@@ -142,7 +142,7 @@ Call label|line_offset {arguments}
 Return
 Exit
 Abort message
-Assert condition
+Assert[!] condition
 Include script_file_path
 Execute script_file_path {arguments}
 Do shell_command {arguments}
