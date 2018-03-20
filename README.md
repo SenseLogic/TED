@@ -59,23 +59,23 @@ SetTabulationSpaceCount tabulation_space_count
 SetFolder INPUT_OUTPUT_FOLDER/
 SetInputFolder INPUT_FOLDER/
 SetOutputFolder OUTPUT_FOLDER/
-RemoveFiles {file_paths}
-MoveFiles source_file_path target_file_path
-CopyFiles source_file_path target_file_path
+RemoveFiles[!] {file_paths}
+MoveFiles[!] source_file_path target_file_path
+CopyFiles[!] source_file_path target_file_path
 ReadFiles {input_file_path_filters}
 IncludeFiles {input_file_path_filters}
 ExcludeFiles [{input_file_path_filters}]
 CreateFiles {input_file_paths}
 CreateFolders {folder_paths}
 WriteFiles
-Print expression
+Print[!] expression
 PrintRanges
 PrintIntervals
 PrintLines [line_index post_line_index]
 PrintSelectedLines
 PrintChangedLines [near_line_count]
 PrintArguments
-PrintVariables
+PrintVariables[!]
 SetFilePath file_path
 SetLineIndex line_index
 SetLineCount line_count
@@ -135,17 +135,17 @@ PopSelections
 PushMarks
 PullMarks
 PopMarks
-Set variable_name assignment_operator expression
-Go label|line_offset [condition]
+Set[!] variable_name assignment_operator expression
+Go[!] label|line_offset [condition]
 Repeat label|line_offset
-Call label|line_offset {arguments}
+Call[!] label|line_offset {arguments}
 Return
 Exit
 Abort message
 Assert[!] condition
 Include script_file_path
-Execute script_file_path {arguments}
-Do shell_command {arguments}
+Execute[!] script_file_path {arguments}
+Do[!] shell_command {arguments}
 ```
 
 ### Filter
