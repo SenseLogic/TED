@@ -9,13 +9,13 @@ RemoveLastEmptyLines 0 $
 AddEmptyLines $ 1
 
 FindLines% 0 $
-    `#ifndef __\@Upper%InputBaseName\_HPP__`
-    `#define __\@Upper%InputBaseName\_HPP__`
+    `#ifndef __\@GetUpperCase%InputBaseName\_HPP__`
+    `#define __\@GetUpperCase%InputBaseName\_HPP__`
 FindLines~% 0 $
-    `#ifndef __\@Upper%InputBaseName\__`
-    `#define __\@Upper%InputBaseName\__`
+    `#ifndef __\@GetUpperCase%InputBaseName\__`
+    `#define __\@GetUpperCase%InputBaseName\__`
 CopyLines^ buffer [ ]
-Set^ buffer = `\@Upper%buffer\`
+Set^ buffer = `\@GetUpperCase%buffer\`
 PasteLines^ buffer ]
 
 Print! `Found :`

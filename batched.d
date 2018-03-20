@@ -2571,27 +2571,27 @@ class SCRIPT
                                 {
                                     processor_part = part_array[ processor_part_index ];
                                     
-                                    if ( processor_part == "@Lower" )
+                                    if ( processor_part == "@GetLowerCase" )
                                     {
                                         value = GetLowerCaseText( value );
                                     }
-                                    else if ( processor_part == "@Upper" )
+                                    else if ( processor_part == "@GetUpperCase" )
                                     {
                                         value = GetUpperCaseText( value );
                                     }
-                                    else if ( processor_part == "@Minor" )
+                                    else if ( processor_part == "@GetMinorCase" )
                                     {
                                         value = GetMinorCaseText( value );
                                     }
-                                    else if ( processor_part == "@Major" )
+                                    else if ( processor_part == "@GetMajorCase" )
                                     {
                                         value = GetMajorCaseText( value );
                                     }
-                                    else if ( processor_part == "@Camel" )
+                                    else if ( processor_part == "@GetCamelCase" )
                                     {
                                         value = GetCamelCaseText( value );
                                     }
-                                    else if ( processor_part == "@Snake" )
+                                    else if ( processor_part == "@GetSnakeCase" )
                                     {
                                         value = GetSnakeCaseText( value );
                                     }

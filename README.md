@@ -25,11 +25,11 @@ AddEmptyLines $ 1
 IgnoreFirstSpaces
 IgnoreLastSpaces
 FindLines% 0 $
-    `#ifndef __\@Upper%InputBaseName\_HPP__`
-    `#define __\@Upper%InputBaseName\_HPP__`
+    `#ifndef __\@GetUpperCase%InputBaseName\_HPP__`
+    `#define __\@GetUpperCase%InputBaseName\_HPP__`
 FindLines~% 0 $
-    `#ifndef __\@Upper%InputBaseName\__`
-    `#define __\@Upper%InputBaseName\__`
+    `#ifndef __\@GetUpperCase%InputBaseName\__`
+    `#define __\@GetUpperCase%InputBaseName\__`
 SetLines^ [ ]
     #pragma once
 RemoveFirstSpaces^ 0 $ 4
@@ -212,7 +212,7 @@ $-offset : negative offset to the end of line
 
 ```
 @Lower : lowercase
-@Upper : uppercase
+@GetUpperCase : uppercase
 @Minor : minorcase
 @Major : majorcase
 @Camel : camelcase
