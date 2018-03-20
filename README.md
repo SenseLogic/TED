@@ -201,30 +201,32 @@ $-offset : negative offset to the end of line
 `\d` : backtab
 `\b` : backspace
 `\ ` : line indentation
-`\@name` : processor
+`\@function` : escape function
 `\$index\` : script argument
-`\$name\` : script variable
+`\$variable\` : script variable
 `\%index\` : function argument
-`\%name\` : file variable
+`\%variable\` : file variable
 ```
 
-### Processors
+### Escape functions
 
 ```
-@Lower : lowercase
-@GetUpperCase : uppercase
-@Minor : minorcase
-@Major : majorcase
-@Camel : camelcase
-@Snake : snakecase
+@GetLowerCase : convert to lowercase
+@GetUpperCase : convert to uppercase
+@GetMinorCase : convert to minorcase
+@GetMajorCase : convert to majorcase
+@GetCamelCase : convert to camelcase
+@GetSnakeCase : convert to snakecase
 ```
 
-### Variables
+### Script variables
 
 ```
 $InputFolder : input folder
 $OutputFolder : output folder
 ```
+
+### File variables
 
 ```
 %InputPath : input file path
@@ -247,6 +249,7 @@ $OutputFolder : output folder
 
 ```
 := : define
+
 = : assign
 .= : append
 ~= : concatenate
@@ -276,12 +279,12 @@ $OutputFolder : output folder
 >= : higher or equal
 > : higher
 
-@ : index
+@ : line
 
 + : add
 - : substract
 
-* : multiplay
+* : multiply
 / : divide
 % : modulo
 
