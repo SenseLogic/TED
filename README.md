@@ -141,6 +141,8 @@ Repeat label|line_offset
 Call label|line_offset {arguments}
 Return
 Exit
+Abort message
+Assert condition
 Include script_file_path
 Execute script_file_path {arguments}
 Do shell_command {arguments}
@@ -241,13 +243,13 @@ $OutputFolder : output folder
 %OutputBaseExtension : output file extension without dot character
 ```
 
-### Operators
+### Operator precedence
 
 ```
-:= : set
-~= : concatenate
-$= : append
+:= : define
 = : assign
+.= : append
+~= : concatenate
 += : add
 -= : substract
 *= : multiply
@@ -258,26 +260,35 @@ $= : append
 ^= : binary xor
 <<= : left shift
 >>= : right shift
-```
 
-```
+. : append
+
+~ : concatenate
+
+|| : boolean or
+
+&& : boolean and
+
 < : lower
 <= : lower or equal
 == : equal
 != : not equal
 >= : higher or equal
 > : higher
-```
 
-```
+@ : index
+
 + : add
 - : substract
+
 * : multiplay
 / : divide
 % : modulo
+
 & : binary and
 | : binary or
 ^ : binary xor
+
 << : left shift
 >> : right shift
 ```

@@ -15,13 +15,14 @@ FindLines~% 0 $
     `#ifndef __\@Upper%InputBaseName\__`
     `#define __\@Upper%InputBaseName\__`
 CopyLines^ buffer [ ]
-Set^ buffer := `\@Upper%buffer\`
+Set^ buffer = `\@Upper%buffer\`
 PasteLines^ buffer ]
 
 Print! `Found :`
 Print^ buffer
 Print^ `\%buffer\`
 
+Call! TestExpressions
 Call! TestIntegers 456
 Call! TestLists
 Call! TestLoops 10
@@ -29,6 +30,21 @@ Call! TestLoops 10
 PrintLines
 
 Exit
+
+##
+
+:TestExpressions
+
+Print! 1 + 2 * 3
+Assert! 1 + 2 * 3 == 7
+
+Print! 2 * 3 + 1
+Assert! 2 * 3 + 1 == 7
+
+Print! ( 1 + 2 ) * 3
+Assert! ( 1 + 2 ) * 3 == 9
+
+Return
 
 ##
 
@@ -45,7 +61,7 @@ Return
 :TestLists
 
 Set! file_name_list = ``
-Set file_name_list $= `\%InputName\`
+Set file_name_list .= `\%InputName\`
 
 Print! file_name_list
 

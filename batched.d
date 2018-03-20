@@ -2951,6 +2951,108 @@ class SCRIPT
 
         return "";
     }
+    
+    // ~~
+    
+    long GetBinaryOperatorLevel(
+        string token
+        )
+    {
+        if ( token == "." )
+        {
+            return 10;
+        }
+        else if ( token == "~" )
+        {
+            return 9;
+        }
+        else if ( token == "||" )
+        {
+            return 8;
+        }
+        else if ( token == "&&" )
+        {
+            return 7;
+        }
+        else if ( token == "<"
+             || token == "<="
+             || token == "=="
+             || token == "!="
+             || token == ">"
+             || token == ">=" )
+        {
+            return 6;
+        }
+        else if ( token == "@" )
+        {
+            return 5;
+        }
+        else if ( token == "+"
+             || token == "-" )
+        {
+            return 4;
+        }
+        else if ( token == "*"
+             || token == "/"
+             || token == "%" )
+        {
+            return 3;
+        }
+        else if ( token == "&"
+             || token == "|"
+             || token == "^" )
+        {
+            return 2;
+        }
+        else if ( token == "<<"
+             || token == ">>" )
+        {
+            return 1;
+        }
+    
+        return 0;
+    }
+    
+    // ~~
+    
+    long GetBinaryOperatorTokenIndex(
+        string[] token_array
+        )
+    {
+        long
+            best_binary_operator_level,
+            nesting_level,
+            binary_operator_level,
+            binary_operator_token_index;
+    
+        binary_operator_token_index = -1;
+        best_binary_operator_level = -1;
+        nesting_level = 0;
+            
+        foreach ( token_index, token; token_array )
+        {
+            if ( token == "(" )
+            {
+                ++nesting_level;
+            }
+            else if ( token == ")" )
+            {
+                --nesting_level;
+            }
+            else if ( nesting_level == 0 )
+            {
+                binary_operator_level = GetBinaryOperatorLevel( token );
+                
+                if ( binary_operator_level >= best_binary_operator_level )
+                {
+                    best_binary_operator_level = binary_operator_level;
+                    binary_operator_token_index = token_index;
+                }
+            }
+        }
+        
+        return binary_operator_token_index;
+    }
 
     // ~~
 
@@ -2975,146 +3077,188 @@ class SCRIPT
 
     // ~~
 
-    void EvaluateExpression(
-        ref string expression_value,
-        string[] expression_token_array,
+    string GetValue(
+        string[] token_array,
         FILE file = null
         )
     {
         long
+            binary_operator_token_index,
             first_value_integer,
+            line_index,
             second_value_integer;
         string
-            operator,
+            binary_operator,
             first_value,
             second_value;
+        string 
+            expression_value;
+        string[]
+            line_array;
 
-        if ( expression_token_array.length == 1 )
+        if ( token_array.length == 1 )
         {
-            expression_value = GetValue( expression_token_array[ 0 ], file );
-        }
-        else if ( expression_token_array.length == 3 )
-        {
-            first_value = GetValue( expression_token_array[ 0 ], file );
-            operator = expression_token_array[ 1 ];
-            second_value = GetValue( expression_token_array[ 2 ], file );
-
-            if ( first_value.IsInteger()
-                 && second_value.IsInteger() )
-            {
-                first_value_integer = first_value.GetInteger();
-                second_value_integer = second_value.GetInteger();
-
-                if ( operator == "<" )
-                {
-                    expression_value = ( first_value_integer < second_value_integer ) ? "1" : "0";
-                }
-                else if ( operator == "<=" )
-                {
-                    expression_value = ( first_value_integer <= second_value_integer ) ? "1" : "0";
-                }
-                else if ( operator == "==" )
-                {
-                    expression_value = ( first_value_integer == second_value_integer ) ? "1" : "0";
-                }
-                else if ( operator == "!=" )
-                {
-                    expression_value = ( first_value_integer != second_value_integer ) ? "1" : "0";
-                }
-                else if ( operator == ">=" )
-                {
-                    expression_value = ( first_value_integer >= second_value_integer ) ? "1" : "0";
-                }
-                else if ( operator == ">" )
-                {
-                    expression_value = ( first_value_integer > second_value_integer ) ? "1" : "0";
-                }
-                else if ( operator == "+" )
-                {
-                    expression_value = ( first_value_integer + second_value_integer ).to!string();
-                }
-                else if ( operator == "-" )
-                {
-                    expression_value = ( first_value_integer - second_value_integer ).to!string();
-                }
-                else if ( operator == "*" )
-                {
-                    expression_value = ( first_value_integer * second_value_integer ).to!string();
-                }
-                else if ( operator == "/" )
-                {
-                    expression_value = ( first_value_integer / second_value_integer ).to!string();
-                }
-                else if ( operator == "%" )
-                {
-                    expression_value = ( first_value_integer % second_value_integer ).to!string();
-                }
-                else if ( operator == "&" )
-                {
-                    expression_value = ( first_value_integer & second_value_integer ).to!string();
-                }
-                else if ( operator == "|" )
-                {
-                    expression_value = ( first_value_integer | second_value_integer ).to!string();
-                }
-                else if ( operator == "^" )
-                {
-                    expression_value = ( first_value_integer ^ second_value_integer ).to!string();
-                }
-                else if ( operator == "<<" )
-                {
-                    expression_value = ( first_value_integer << second_value_integer ).to!string();
-                }
-                else if ( operator == ">>" )
-                {
-                    expression_value = ( first_value_integer >> second_value_integer ).to!string();
-                }
-                else
-                {
-                    Abort( "Invalid integer expression" );
-                }
-            }
-            else
-            {
-                if ( operator == "<" )
-                {
-                    expression_value = ( first_value < second_value ) ? "1" : "0";
-                }
-                else if ( operator == "<=" )
-                {
-                    expression_value = ( first_value < second_value ) ? "1" : "0";
-                }
-                else if ( operator == "==" )
-                {
-                    expression_value = ( first_value < second_value ) ? "1" : "0";
-                }
-                else if ( operator == "!=" )
-                {
-                    expression_value = ( first_value < second_value ) ? "1" : "0";
-                }
-                else if ( operator == ">=" )
-                {
-                    expression_value = ( first_value < second_value ) ? "1" : "0";
-                }
-                else if ( operator == ">" )
-                {
-                    expression_value = ( first_value < second_value ) ? "1" : "0";
-                }
-                else
-                {
-                    Abort( "Invalid comparison expression" );
-                }
-            }
+            return GetValue( token_array[ 0 ], file );
         }
         else
         {
-            Abort( "Invalid expression" );
+            binary_operator_token_index = GetBinaryOperatorTokenIndex( token_array );
+            
+            if ( binary_operator_token_index > 0 )
+            {                 
+                first_value = GetValue( token_array[ 0 .. binary_operator_token_index ], file );
+                binary_operator = token_array[ binary_operator_token_index ];
+                second_value = GetValue( token_array[ binary_operator_token_index + 1 .. $ ], file );
+       
+                if ( first_value.IsInteger()
+                     && second_value.IsInteger() )
+                {
+                    first_value_integer = first_value.GetInteger();
+                    second_value_integer = second_value.GetInteger();
+
+                    if ( binary_operator == "||" )
+                    {
+                        return ( first_value_integer || second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "&&" )
+                    {
+                        return ( first_value_integer && second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "<" )
+                    {
+                        return ( first_value_integer < second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "<=" )
+                    {
+                        return ( first_value_integer <= second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "==" )
+                    {
+                        return ( first_value_integer == second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "!=" )
+                    {
+                        return ( first_value_integer != second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == ">=" )
+                    {
+                        return ( first_value_integer >= second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == ">" )
+                    {
+                        return ( first_value_integer > second_value_integer ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "+" )
+                    {
+                        return ( first_value_integer + second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "-" )
+                    {
+                        return ( first_value_integer - second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "*" )
+                    {
+                        return ( first_value_integer * second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "/" )
+                    {
+                        return ( first_value_integer / second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "%" )
+                    {
+                        return ( first_value_integer % second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "&" )
+                    {
+                        return ( first_value_integer & second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "|" )
+                    {
+                        return ( first_value_integer | second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "^" )
+                    {
+                        return ( first_value_integer ^ second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == "<<" )
+                    {
+                        return ( first_value_integer << second_value_integer ).to!string();
+                    }
+                    else if ( binary_operator == ">>" )
+                    {
+                        return ( first_value_integer >> second_value_integer ).to!string();
+                    }
+                }
+                else
+                {
+                    if ( binary_operator == "." )
+                    {
+                        if ( first_value.length > 0 )
+                        {
+                            return first_value ~ "\n" ~ second_value;
+                        }
+                        else
+                        {
+                            return first_value ~ second_value;
+                        }
+                    }
+                    else if ( binary_operator == "~" )
+                    {
+                        return first_value ~ second_value;
+                    }
+                    else if ( binary_operator == "<" )
+                    {
+                        return ( first_value < second_value ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "<=" )
+                    {
+                        return ( first_value < second_value ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "==" )
+                    {
+                        return ( first_value < second_value ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "!=" )
+                    {
+                        return ( first_value < second_value ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == ">=" )
+                    {
+                        return ( first_value < second_value ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == ">" )
+                    {
+                        return ( first_value < second_value ) ? "1" : "0";
+                    }
+                    else if ( binary_operator == "@" )
+                    {
+                        line_array = first_value.split( '\n' );
+                        line_index = line_array.GetLineIndex( second_value );
+                        
+                        if ( line_index >= 0
+                             && line_index < line_array.length )
+                        {
+                            return line_array[ line_index ];
+                        }
+                    }
+                }
+            }
+            else if ( token_array.length >= 2
+                      && token_array[ 0 ] == "("
+                      && token_array[ $ - 1 ] == ")" )
+            {
+                return GetValue( token_array[ 1 .. $ - 1 ], file );
+            }
         }
+        
+        Abort( "Invalid expression : " ~ token_array.join( ' ' ) );
+        
+        return "";
     }
 
     // ~~
 
-    bool EvaluateCondition(
+    bool GetBooleanValue(
         string[] expression_token_array,
         FILE file = null
         )
@@ -3122,7 +3266,7 @@ class SCRIPT
         string
             expression_value;
 
-        EvaluateExpression( expression_value, expression_token_array, file );
+        expression_value = GetValue( expression_token_array, file );
 
         if ( expression_value == "0" )
         {
@@ -3142,7 +3286,7 @@ class SCRIPT
 
     void EvaluateAssignment(
         ref string variable_value,
-        string operator,
+        string assignment_operator,
         string[] expression_token_array,
         FILE file = null
         )
@@ -3153,51 +3297,50 @@ class SCRIPT
         string
             expression_value;
 
-        if ( operator == ":=" )
+        if ( assignment_operator == ":=" )
         {
             variable_value = Unquote( expression_token_array, file ).join( '\n' );
         }
-        else if ( operator == "~=" )
+        else 
         {
-            variable_value ~= Unquote( expression_token_array, file ).join( '\n' );
-        }
-        else if ( operator == "$=" )
-        {
-            if ( variable_value.length > 0
-                 && expression_token_array.length > 0 )
+            expression_value = GetValue( expression_token_array, file );
+            
+            if ( assignment_operator == ".=" )
             {
-                variable_value ~= '\n';
+                if ( variable_value.length > 0 )
+                {
+                    variable_value ~= '\n';
+                }
+
+                variable_value ~= expression_value;
             }
-
-            variable_value ~= Unquote( expression_token_array, file ).join( '\n' );
-        }
-        else
-        {
-            EvaluateExpression( expression_value, expression_token_array, file );
-
-            if ( variable_value.IsInteger()
-                 && expression_value.IsInteger() )
+            else if ( assignment_operator == "=" )
+            {
+                variable_value = expression_value;
+            }
+            else if ( assignment_operator == "~=" )
+            {
+                variable_value ~= expression_value;
+            }
+            else if ( variable_value.IsInteger()
+                      && expression_value.IsInteger() )
             {
                 variable_value_integer = variable_value.GetInteger();
                 expression_value_integer = expression_value.GetInteger();
 
-                if ( operator == "=" )
-                {
-                    variable_value_integer = expression_value_integer;
-                }
-                else if ( operator == "+=" )
+                if ( assignment_operator == "+=" )
                 {
                     variable_value_integer += expression_value_integer;
                 }
-                else if ( operator == "-=" )
+                else if ( assignment_operator == "-=" )
                 {
                     variable_value_integer -= expression_value_integer;
                 }
-                else if ( operator == "*=" )
+                else if ( assignment_operator == "*=" )
                 {
                     variable_value_integer *= expression_value_integer;
                 }
-                else if ( operator == "/=" )
+                else if ( assignment_operator == "/=" )
                 {
                     if ( expression_value_integer != 0 )
                     {
@@ -3208,7 +3351,7 @@ class SCRIPT
                         Abort( "Null divisor" );
                     }
                 }
-                else if ( operator == "%=" )
+                else if ( assignment_operator == "%=" )
                 {
                     if ( expression_value_integer != 0 )
                     {
@@ -3219,43 +3362,36 @@ class SCRIPT
                         Abort( "Null divisor" );
                     }
                 }
-                else if ( operator == "&=" )
+                else if ( assignment_operator == "&=" )
                 {
                     variable_value_integer &= expression_value_integer;
                 }
-                else if ( operator == "|=" )
+                else if ( assignment_operator == "|=" )
                 {
                     variable_value_integer |= expression_value_integer;
                 }
-                else if ( operator == "^=" )
+                else if ( assignment_operator == "^=" )
                 {
                     variable_value_integer ^= expression_value_integer;
                 }
-                else if ( operator == "<<=" )
+                else if ( assignment_operator == "<<=" )
                 {
                     variable_value_integer <<= expression_value_integer;
                 }
-                else if ( operator == ">>=" )
+                else if ( assignment_operator == ">>=" )
                 {
                     variable_value_integer >>= expression_value_integer;
                 }
                 else
                 {
-                    Abort( "Invalid assignment operator : " ~ operator );
+                    Abort( "Invalid assignment operator : " ~ assignment_operator );
                 }
 
                 variable_value = variable_value_integer.to!string();
             }
             else
             {
-                if ( operator == "=" )
-                {
-                    variable_value = expression_value;
-                }
-                else
-                {
-                    Abort( "Invalid expression" );
-                }
+                Abort( "Invalid assignment" );
             }
         }
     }
@@ -3264,7 +3400,7 @@ class SCRIPT
 
     void AssignVariable(
         string variable_name,
-        string operator,
+        string assignment_operator,
         string[] expression_token_array,
         FILE file = null
         )
@@ -3298,8 +3434,8 @@ class SCRIPT
         
         if ( variable_name.IsIdentifier() )
         {
-            if ( operator == "="
-                 || operator == ":=" )
+            if ( assignment_operator == "="
+                 || assignment_operator == ":=" )
             {
                 if ( it_is_file_variable )
                 {
@@ -3351,13 +3487,13 @@ class SCRIPT
                 
             if ( it_is_file_variable )
             {
-                EvaluateAssignment( file.VariableMap[ variable_name ], operator, expression_token_array, file );
+                EvaluateAssignment( file.VariableMap[ variable_name ], assignment_operator, expression_token_array, file );
                 
                 return;
             }
             else if ( it_is_script_variable )
             {
-                EvaluateAssignment( VariableMap[ variable_name ], operator, expression_token_array, file );
+                EvaluateAssignment( VariableMap[ variable_name ], assignment_operator, expression_token_array, file );
                 
                 return;
             }
@@ -3873,8 +4009,6 @@ class SCRIPT
     void Print(
         )
     {
-        string
-            expression_value;
         string[]
             expression_argument_array;
 
@@ -3886,17 +4020,13 @@ class SCRIPT
             {
                 if ( file.IsSelected() )
                 {
-                    EvaluateExpression( expression_value, expression_argument_array, file );
-                    
-                    writeln( expression_value );
+                    writeln( GetValue( expression_argument_array, file ) );
                 }
             }
         }
         else
         {   
-            EvaluateExpression( expression_value, expression_argument_array );
-            
-            writeln( expression_value );
+            writeln( GetValue( expression_argument_array ) );
         }
     }
 
@@ -5597,7 +5727,7 @@ class SCRIPT
             {
                 foreach( ref file; FileArray )
                 {
-                    if ( EvaluateCondition( GetArgumentArray(), file ) )
+                    if ( GetBooleanValue( GetArgumentArray(), file ) )
                     {
                         LineIndex = label_line_index;
                     }
@@ -5605,7 +5735,7 @@ class SCRIPT
             }
             else
             {
-                if ( EvaluateCondition( GetArgumentArray() ) )
+                if ( GetBooleanValue( GetArgumentArray() ) )
                 {
                     LineIndex = label_line_index;
                 }
@@ -5725,6 +5855,46 @@ class SCRIPT
         )
     {
         exit( 0 );
+    }
+
+    // ~~
+
+    void Abort(
+        )
+    {
+        Abort( GetValue( GetArgumentArray() ) );
+    }
+
+    // ~~
+
+    void Assert(
+        )
+    {
+        string[]
+            expression_argument_array;
+
+        expression_argument_array = GetArgumentArray();
+        
+        if ( FilesAreIterated )
+        {
+            foreach ( ref file; FileArray )
+            {
+                if ( file.IsSelected() )
+                {
+                    if ( !GetBooleanValue( expression_argument_array, file ) )
+                    {
+                        Abort( "Invalid assertion : " ~ expression_argument_array.join( ' ' ) );
+                    }
+                }
+            }
+        }
+        else
+        {   
+            if ( !GetBooleanValue( expression_argument_array ) )
+            {
+                Abort( "Invalid assertion : " ~ expression_argument_array.join( ' ' ) );
+            }
+        }
     }
 
     // ~~
@@ -6307,6 +6477,14 @@ class SCRIPT
                 {
                     Exit();
                 }
+                else if ( command == "Abort" )
+                {
+                    Abort();
+                }
+                else if ( command == "Assert" )
+                {
+                    Assert();
+                }
                 else if ( command == "Include" )
                 {
                     Include();
@@ -6800,6 +6978,51 @@ long GetCharacterIndex(
 
 // ~~
 
+long GetValidLineIndex(
+    string[] line_array,
+    long line_index
+    )
+{
+    if ( line_index < 0 )
+    {
+        line_index = 0;
+    }
+
+    if ( line_index > line_array.length )
+    {
+        line_index = line_array.length;
+    }
+
+    return line_index;
+}
+
+// ~~
+
+long GetLineIndex(
+    string[] line_array,
+    string line_index_expression
+    )
+{
+    if ( line_index_expression == "$" )
+    {
+        return line_array.GetValidLineIndex( line_array.length.to!long() );
+    }
+    else if ( line_index_expression.startsWith( "$+" ) )
+    {
+        return line_array.GetValidLineIndex( line_array.length.to!long() + line_index_expression[ 2 .. $ ].GetInteger() );
+    }
+    else if ( line_index_expression.startsWith( "$-" ) )
+    {
+        return line_array.GetValidLineIndex( line_array.length.to!long() - line_index_expression[ 2 .. $ ].GetInteger() );
+    }
+    else
+    {
+        return line_array.GetValidLineIndex( line_index_expression.GetInteger() );
+    }
+}
+
+// ~~
+
 string ReplaceTabulations(
     string line,
     long tabulation_space_count
@@ -7235,6 +7458,8 @@ void main(
         writeln( "    Call label|line_offset {arguments}" );
         writeln( "    Return" );
         writeln( "    Exit" );
+        writeln( "    Abort message" );
+        writeln( "    Assert condition" );
         writeln( "    Include script_file_path" );
         writeln( "    Execute script_file_path {arguments}" );
         writeln( "    Do shell_command {arguments}" );
