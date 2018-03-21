@@ -1,3 +1,5 @@
+Call! TestFunctions
+
 SetInputFolder IN/
 SetOutputFolder OUT/
 
@@ -9,13 +11,13 @@ RemoveLastEmptyLines 0 $
 AddEmptyLines $ 1
 
 FindLines% 0 $
-    `#ifndef __\@GetUpperCase%InputBaseName\_HPP__`
-    `#define __\@GetUpperCase%InputBaseName\_HPP__`
+    `#ifndef __\@UpperCase%InputBaseName\_HPP__`
+    `#define __\@UpperCase%InputBaseName\_HPP__`
 FindLines~% 0 $
-    `#ifndef __\@GetUpperCase%InputBaseName\__`
-    `#define __\@GetUpperCase%InputBaseName\__`
+    `#ifndef __\@UpperCase%InputBaseName\__`
+    `#define __\@UpperCase%InputBaseName\__`
 CopyLines^ buffer [ ]
-Set^ buffer = `\@GetUpperCase%buffer\`
+Set^ buffer = `\@UpperCase%buffer\`
 PasteLines^ buffer ]
 
 Print! `Found :`
@@ -26,6 +28,7 @@ Call! TestExpressions
 Call! TestIntegers 456
 Call! TestLists
 Call! TestLoops 10
+Call! TestFunctions
 
 PrintLines
 
@@ -89,3 +92,35 @@ PrintLines
 
 Return
 
+##
+
+:TestFunctions
+
+Set! value = `***` ~ MajorCase `test` ~ `***`
+Print! value
+Assert! value == `***Test***`
+
+Set! value = `***` ~ MajorCase ( LowerCase `TEST` ) ~ `***`
+Print! value
+Assert! value == `***Test***`
+
+Set! value = `***` ~ Twice `test` ~ `***`
+Print! value
+Assert! value == `***testtest***`
+
+Set! value = `***` ~ Twice ( Twice `test` ) ~ `***`
+Print! value
+Assert! value == `***testtesttesttest***`
+
+Set! test = `TEST`
+Set! value = `***\@Twice@Twice@MajorCase@LowerCase$test\***`
+Print! value
+Assert! value == `***TestTestTestTest***`
+
+Return
+
+##
+
+:Twice
+
+Return %0 ~ %0

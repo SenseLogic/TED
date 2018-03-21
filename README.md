@@ -25,11 +25,11 @@ AddEmptyLines $ 1
 IgnoreFirstSpaces
 IgnoreLastSpaces
 FindLines% 0 $
-    `#ifndef __\@GetUpperCase%InputBaseName\_HPP__`
-    `#define __\@GetUpperCase%InputBaseName\_HPP__`
+    `#ifndef __\@UpperCase%InputBaseName\_HPP__`
+    `#define __\@UpperCase%InputBaseName\_HPP__`
 FindLines~% 0 $
-    `#ifndef __\@GetUpperCase%InputBaseName\__`
-    `#define __\@GetUpperCase%InputBaseName\__`
+    `#ifndef __\@UpperCase%InputBaseName\__`
+    `#define __\@UpperCase%InputBaseName\__`
 SetLines^ [ ]
     #pragma once
 RemoveFirstSpaces^ 0 $ 4
@@ -139,7 +139,7 @@ Set[!] variable_name assignment_operator expression
 Go[!] label|line_offset [condition]
 Repeat label|line_offset
 Call[!] label|line_offset {arguments}
-Return
+Return [expression]
 Exit
 Abort message
 Assert[!] condition
@@ -208,15 +208,15 @@ $-offset : negative offset to the end of line
 `\%variable\` : file variable
 ```
 
-### Escape functions
+### Functions
 
 ```
-@GetLowerCase : convert to lowercase
-@GetUpperCase : convert to uppercase
-@GetMinorCase : convert to minorcase
-@GetMajorCase : convert to majorcase
-@GetCamelCase : convert to camelcase
-@GetSnakeCase : convert to snakecase
+GetLowerCase : convert to lowercase
+GetUpperCase : convert to uppercase
+GetMinorCase : convert to minorcase
+GetMajorCase : convert to majorcase
+GetCamelCase : convert to camelcase
+GetSnakeCase : convert to snakecase
 ```
 
 ### Script variables

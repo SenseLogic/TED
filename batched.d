@@ -400,9 +400,9 @@ class FILE
 
         SplitFilePath( InputPath, InputFolderPath, InputName );
         SplitFileName( InputName, InputBaseName, InputExtension );
-        
+
         InputBaseExtension = InputExtension.replace( ".", "" );
-        
+
         if ( InputFolderPath.startsWith( Script.InputFolderPath ) )
         {
             InputSubFolderPath = InputFolderPath[ Script.InputFolderPath.length .. $ ];
@@ -411,7 +411,7 @@ class FILE
         {
             InputSubFolderPath = "";
         }
-        
+
         VariableMap[ "InputPath" ] = InputPath;
         VariableMap[ "InputFolder" ] = InputFolderPath;
         VariableMap[ "InputSubFolder" ] = InputSubFolderPath;
@@ -430,10 +430,10 @@ class FILE
         OutputPath = output_file_path;
 
         SplitFilePath( OutputPath, OutputFolderPath, OutputName );
-        SplitFileName( OutputName, OutputBaseName, OutputExtension );        
-        
+        SplitFileName( OutputName, OutputBaseName, OutputExtension );
+
         OutputBaseExtension = OutputExtension.replace( ".", "" );
-        
+
         if ( OutputFolderPath.startsWith( Script.OutputFolderPath ) )
         {
             OutputSubFolderPath = OutputFolderPath[ Script.OutputFolderPath.length .. $ ];
@@ -442,7 +442,7 @@ class FILE
         {
             OutputSubFolderPath = "";
         }
-        
+
         VariableMap[ "OutputPath" ] = OutputPath;
         VariableMap[ "OutputFolder" ] = OutputFolderPath;
         VariableMap[ "OutputSubFolder" ] = OutputSubFolderPath;
@@ -2119,6 +2119,8 @@ class SCRIPT
         VariableMap;
     CALL[]
         CallArray;
+    string
+        Result;
     bool
         QuotationIsEnabled,
         FirstSpacesAreChecked,
@@ -2293,7 +2295,7 @@ class SCRIPT
                                         while ( character_index + 1 < line.length )
                                         {
                                             LineArray[ $ - 1 ] ~= line[ ++character_index ];
-                                            
+
                                             if ( line[ character_index ] == '\\' )
                                             {
                                                 break;
@@ -2440,10 +2442,10 @@ class SCRIPT
             character;
         long
             character_index,
-            processor_part_index,
+            function_part_index,
             part_index;
         string
-            processor_part,
+            function_part,
             part,
             unquoted_argument,
             value;
@@ -2504,39 +2506,39 @@ class SCRIPT
                     else if ( "@$%".indexOf( character ) >= 0 )
                     {
                         part_array = null;
-                        
+
                         while ( character_index < argument.length )
                         {
                             character = argument[ character_index ];
-                            
+
                             if ( character == '\\' )
                             {
                                 break;
                             }
-                            else 
+                            else
                             {
                                 if ( "@$%".indexOf( character ) >= 0 )
                                 {
                                     part_array ~= "";
                                 }
-                                
+
                                 part_array[ $ - 1 ] ~= character;
                             }
-                            
+
                             ++character_index;
                         }
-                        
+
                         for ( part_index = 0;
                               part_index < part_array.length;
                               ++part_index )
                         {
                             part = part_array[ part_index ];
-                            
+
                             if ( part.length < 2 )
                             {
                                 Abort( "Invalid escape sequence : " ~ part );
                             }
-                            
+
                             if ( part[ 0 ] != '@' )
                             {
                                 if ( part[ 0 ] == '%' )
@@ -2563,42 +2565,13 @@ class SCRIPT
                                         value = GetVariable( part, file );
                                     }
                                 }
-                                
-                                for ( processor_part_index = part_index - 1;
-                                      processor_part_index >= 0
-                                      && part_array[ processor_part_index ][ 0 ] == '@';
-                                      --processor_part_index )
+
+                                for ( function_part_index = part_index - 1;
+                                      function_part_index >= 0
+                                      && part_array[ function_part_index ][ 0 ] == '@';
+                                      --function_part_index )
                                 {
-                                    processor_part = part_array[ processor_part_index ];
-                                    
-                                    if ( processor_part == "@GetLowerCase" )
-                                    {
-                                        value = GetLowerCaseText( value );
-                                    }
-                                    else if ( processor_part == "@GetUpperCase" )
-                                    {
-                                        value = GetUpperCaseText( value );
-                                    }
-                                    else if ( processor_part == "@GetMinorCase" )
-                                    {
-                                        value = GetMinorCaseText( value );
-                                    }
-                                    else if ( processor_part == "@GetMajorCase" )
-                                    {
-                                        value = GetMajorCaseText( value );
-                                    }
-                                    else if ( processor_part == "@GetCamelCase" )
-                                    {
-                                        value = GetCamelCaseText( value );
-                                    }
-                                    else if ( processor_part == "@GetSnakeCase" )
-                                    {
-                                        value = GetSnakeCaseText( value );
-                                    }
-                                    else
-                                    {
-                                        Abort( "Invalid escape sequence : " ~ processor_part );
-                                    }
+                                    value = GetFunctionValue( part_array[ function_part_index ][ 1 .. $ ], [ value ] );
                                 }
 
                                 unquoted_argument ~= value;
@@ -2738,7 +2711,7 @@ class SCRIPT
     {
         string
             label_line;
-            
+
         if ( label.IsInteger() )
         {
             return GetValidLineIndex( LineIndex + label.GetInteger() );
@@ -2769,8 +2742,8 @@ class SCRIPT
         )
     {
         string
-            label_line;  
-            
+            label_line;
+
         if ( label.IsInteger() )
         {
             return GetValidLineIndex( LineIndex + label.GetInteger() );
@@ -2838,7 +2811,7 @@ class SCRIPT
 
         return "";
     }
-    
+
     // ~~
 
     void SetVariable(
@@ -2938,7 +2911,7 @@ class SCRIPT
                     return *variable;
                 }
             }
-            
+
             variable = variable_name in VariableMap;
 
             if ( variable !is null )
@@ -2951,28 +2924,28 @@ class SCRIPT
 
         return "";
     }
-    
+
     // ~~
-    
+
     long GetBinaryOperatorLevel(
         string token
         )
     {
         if ( token == "." )
         {
-            return 10;
+            return 9;
         }
         else if ( token == "~" )
         {
-            return 9;
+            return 8;
         }
         else if ( token == "||" )
         {
-            return 8;
+            return 7;
         }
         else if ( token == "&&" )
         {
-            return 7;
+            return 6;
         }
         else if ( token == "<"
              || token == "<="
@@ -2981,40 +2954,40 @@ class SCRIPT
              || token == ">"
              || token == ">=" )
         {
-            return 6;
+            return 5;
         }
         else if ( token == "@" )
         {
-            return 5;
+            return 4;
         }
         else if ( token == "+"
              || token == "-" )
         {
-            return 4;
+            return 3;
         }
         else if ( token == "*"
              || token == "/"
              || token == "%" )
         {
-            return 3;
+            return 2;
         }
         else if ( token == "&"
              || token == "|"
              || token == "^" )
         {
-            return 2;
+            return 1;
         }
         else if ( token == "<<"
              || token == ">>" )
         {
-            return 1;
+            return 0;
         }
-    
-        return 0;
+
+        return -1;
     }
-    
+
     // ~~
-    
+
     long GetBinaryOperatorTokenIndex(
         string[] token_array
         )
@@ -3024,11 +2997,11 @@ class SCRIPT
             nesting_level,
             binary_operator_level,
             binary_operator_token_index;
-    
+
         binary_operator_token_index = -1;
         best_binary_operator_level = -1;
         nesting_level = 0;
-            
+
         foreach ( token_index, token; token_array )
         {
             if ( token == "(" )
@@ -3042,36 +3015,183 @@ class SCRIPT
             else if ( nesting_level == 0 )
             {
                 binary_operator_level = GetBinaryOperatorLevel( token );
-                
-                if ( binary_operator_level >= best_binary_operator_level )
+
+                if ( binary_operator_level >= 0
+                     && binary_operator_level >= best_binary_operator_level )
                 {
                     best_binary_operator_level = binary_operator_level;
                     binary_operator_token_index = token_index;
                 }
             }
         }
-        
+
         return binary_operator_token_index;
     }
 
     // ~~
 
-    string GetValue(
-        string value,
+    string GetFunctionValue(
+        string function_name,
+        string[] argument_array,
         FILE file = null
         )
     {
-        if ( value.startsWith( '`' ) )
+        long
+            label_line_index;
+        CALL
+            call;
+
+        if ( function_name == "LowerCase"
+             && argument_array.length == 1 )
         {
-            return Unquote( value, file );
+            return GetLowerCaseText( argument_array[ 0 ] );
         }
-        else if ( value.IsInteger() )
+        else if ( function_name == "UpperCase"
+                  && argument_array.length == 1 )
         {
-            return value;
+            return GetUpperCaseText( argument_array[ 0 ] );
+        }
+        else if ( function_name == "MinorCase"
+                  && argument_array.length == 1 )
+        {
+            return GetMinorCaseText( argument_array[ 0 ] );
+        }
+        else if ( function_name == "MajorCase"
+                  && argument_array.length == 1 )
+        {
+            return GetMajorCaseText( argument_array[ 0 ] );
+        }
+        else if ( function_name == "CamelCase"
+                  && argument_array.length == 1 )
+        {
+            return GetCamelCaseText( argument_array[ 0 ] );
+        }
+        else if ( function_name == "SnakeCase"
+                  && argument_array.length == 1 )
+        {
+            return GetSnakeCaseText( argument_array[ 0 ] );
         }
         else
         {
-            return GetVariable( value, file );
+            label_line_index = GetLabelLineIndex( function_name );
+
+            call = new CALL;
+            call.ArgumentArray = argument_array;
+            call.ReturnLineIndex = LineIndex;
+
+            CallArray ~= call;
+
+            LineIndex = label_line_index;
+
+            while ( ExecuteLine() > 0 )
+            {
+                ++LineIndex;
+            }
+
+            return Result;
+        }
+
+        Abort( "Invalid function call : " ~ function_name ~ " " ~ argument_array.join( ' ' ) );
+
+        return "";
+    }
+
+    // ~~
+
+    string GetFunctionValue(
+        string[] token_array,
+        FILE file = null
+        )
+    {
+        long
+            last_token_index,
+            nesting_level,
+            token_index;
+        string
+            function_name,
+            last_token,
+            token;
+        string[]
+            argument_array;
+
+        if ( token_array.length > 0 )
+        {
+            function_name = token_array[ 0 ];
+
+            for ( token_index = 1;
+                  token_index < token_array.length;
+                  ++token_index )
+            {
+                token = token_array[ token_index ];
+
+                if ( token == "(" )
+                {
+                    nesting_level = 0;
+
+                    for ( last_token_index = token_index;
+                          last_token_index < token_array.length;
+                          ++last_token_index )
+                    {
+                        last_token = token_array[ last_token_index ];
+
+                        if ( last_token == "(" )
+                        {
+                            ++nesting_level;
+                        }
+                        else if ( last_token == ")" )
+                        {
+                            --nesting_level;
+
+                            if ( nesting_level == 0 )
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if ( last_token_index < token_array.length )
+                    {
+                        argument_array ~= GetValue( token_array[ token_index + 1 .. last_token_index ], file );
+
+                        token_index = last_token_index;
+                    }
+                    else
+                    {
+                        Abort( "Invalid expression : " ~ token_array.join( ' ' ) );
+                    }
+                }
+                else
+                {
+                    argument_array ~= GetValue( token, file );
+                }
+            }
+
+            return GetFunctionValue( function_name, argument_array, file );
+        }
+
+        Abort( "Invalid function call" );
+
+        return "";
+    }
+
+    // ~~
+
+    string GetValue(
+        string token,
+        FILE file = null
+        )
+    {
+        if ( token.startsWith( '`' ) )
+        {
+            return Unquote( token, file );
+        }
+        else if ( token.IsInteger() )
+        {
+            return token;
+        }
+        else
+        {
+            return GetVariable( token, file );
         }
     }
 
@@ -3091,7 +3211,7 @@ class SCRIPT
             binary_operator,
             first_value,
             second_value;
-        string 
+        string
             expression_value;
         string[]
             line_array;
@@ -3103,13 +3223,13 @@ class SCRIPT
         else
         {
             binary_operator_token_index = GetBinaryOperatorTokenIndex( token_array );
-            
+
             if ( binary_operator_token_index > 0 )
-            {                 
+            {
                 first_value = GetValue( token_array[ 0 .. binary_operator_token_index ], file );
                 binary_operator = token_array[ binary_operator_token_index ];
                 second_value = GetValue( token_array[ binary_operator_token_index + 1 .. $ ], file );
-       
+
                 if ( first_value.IsInteger()
                      && second_value.IsInteger() )
                 {
@@ -3212,29 +3332,29 @@ class SCRIPT
                     }
                     else if ( binary_operator == "<=" )
                     {
-                        return ( first_value < second_value ) ? "1" : "0";
+                        return ( first_value <= second_value ) ? "1" : "0";
                     }
                     else if ( binary_operator == "==" )
                     {
-                        return ( first_value < second_value ) ? "1" : "0";
+                        return ( first_value == second_value ) ? "1" : "0";
                     }
                     else if ( binary_operator == "!=" )
                     {
-                        return ( first_value < second_value ) ? "1" : "0";
+                        return ( first_value != second_value ) ? "1" : "0";
                     }
                     else if ( binary_operator == ">=" )
                     {
-                        return ( first_value < second_value ) ? "1" : "0";
+                        return ( first_value >= second_value ) ? "1" : "0";
                     }
                     else if ( binary_operator == ">" )
                     {
-                        return ( first_value < second_value ) ? "1" : "0";
+                        return ( first_value > second_value ) ? "1" : "0";
                     }
                     else if ( binary_operator == "@" )
                     {
                         line_array = first_value.split( '\n' );
                         line_index = line_array.GetLineIndex( second_value );
-                        
+
                         if ( line_index >= 0
                              && line_index < line_array.length )
                         {
@@ -3249,10 +3369,14 @@ class SCRIPT
             {
                 return GetValue( token_array[ 1 .. $ - 1 ], file );
             }
+            else
+            {
+                return GetFunctionValue( token_array, file );
+            }
         }
-        
+
         Abort( "Invalid expression : " ~ token_array.join( ' ' ) );
-        
+
         return "";
     }
 
@@ -3301,10 +3425,10 @@ class SCRIPT
         {
             variable_value = Unquote( expression_token_array, file ).join( '\n' );
         }
-        else 
+        else
         {
             expression_value = GetValue( expression_token_array, file );
-            
+
             if ( assignment_operator == ".=" )
             {
                 if ( variable_value.length > 0 )
@@ -3410,16 +3534,16 @@ class SCRIPT
             it_is_script_variable;
         string
             * variable;
-        
+
         it_is_file_variable = false;
         it_is_script_variable = false;
-                
+
         if ( variable_name.startsWith( '%' ) )
         {
             variable_name = variable_name[ 1 .. $ ];
-            
+
             it_is_file_variable = true;
-            
+
             if ( file is null )
             {
                 Abort( "Invalid variable : " ~ variable_name );
@@ -3428,10 +3552,10 @@ class SCRIPT
         else if ( variable_name.startsWith( '$' ) )
         {
             variable_name = variable_name[ 1 .. $ ];
-            
+
             it_is_script_variable = true;
         }
-        
+
         if ( variable_name.IsIdentifier() )
         {
             if ( assignment_operator == "="
@@ -3455,7 +3579,7 @@ class SCRIPT
                 {
                     it_is_file_variable = ( file !is null && ( variable_name in file.VariableMap ) !is null );
                     it_is_script_variable = ( ( variable_name in VariableMap ) !is null );
-                     
+
                     if ( it_is_file_variable )
                     {
                         it_is_script_variable = false;
@@ -3465,13 +3589,13 @@ class SCRIPT
                         if ( file is null )
                         {
                             VariableMap[ variable_name ] = "";
-                            
+
                             it_is_script_variable = true;
                         }
                         else
                         {
                             file.VariableMap[ variable_name ] = "";
-                        
+
                             it_is_file_variable = true;
                         }
                     }
@@ -3484,21 +3608,21 @@ class SCRIPT
                 it_is_file_variable = ( file !is null && ( variable_name in file.VariableMap ) !is null );
                 it_is_script_variable = ( ( variable_name in VariableMap ) !is null );
             }
-                
+
             if ( it_is_file_variable )
             {
                 EvaluateAssignment( file.VariableMap[ variable_name ], assignment_operator, expression_token_array, file );
-                
+
                 return;
             }
             else if ( it_is_script_variable )
             {
                 EvaluateAssignment( VariableMap[ variable_name ], assignment_operator, expression_token_array, file );
-                
+
                 return;
             }
         }
-        
+
         Abort( "Invalid variable : " ~ variable_name );
     }
 
@@ -3659,7 +3783,7 @@ class SCRIPT
     {
         InputFolderPath = Unquote( GetArgument() );
         OutputFolderPath = InputFolderPath;
-        
+
         VariableMap[ "InputFolder" ] = InputFolderPath;
         VariableMap[ "OutputFolder" ] = OutputFolderPath;
     }
@@ -3670,7 +3794,7 @@ class SCRIPT
         )
     {
         InputFolderPath = Unquote( GetArgument() );
-        
+
         VariableMap[ "InputFolder" ] = InputFolderPath;
     }
 
@@ -3680,7 +3804,7 @@ class SCRIPT
         )
     {
         OutputFolderPath = Unquote( GetArgument() );
-        
+
         VariableMap[ "OutputFolder" ] = OutputFolderPath;
     }
 
@@ -4013,7 +4137,7 @@ class SCRIPT
             expression_argument_array;
 
         expression_argument_array = GetArgumentArray();
-        
+
         if ( FilesAreIterated )
         {
             foreach ( ref file; FileArray )
@@ -4025,7 +4149,7 @@ class SCRIPT
             }
         }
         else
-        {   
+        {
             writeln( GetValue( expression_argument_array ) );
         }
     }
@@ -5796,7 +5920,7 @@ class SCRIPT
                 if ( file.IsSelected() )
                 {
                     call = new CALL;
-                    call.ArgumentArray = Unquote( GetArgumentArray() );
+                    call.ArgumentArray = Unquote( GetArgumentArray(), file );
                     call.ReturnLineIndex = LineIndex;
 
                     CallArray ~= call;
@@ -5834,6 +5958,15 @@ class SCRIPT
     {
         CALL
             call;
+
+        if ( HasArgument() )
+        {
+            Result = GetValue( GetArgumentArray() );
+        }
+        else
+        {
+            Result = "";
+        }
 
         if ( CallArray.length > 0 )
         {
@@ -5874,7 +6007,7 @@ class SCRIPT
             expression_argument_array;
 
         expression_argument_array = GetArgumentArray();
-        
+
         if ( FilesAreIterated )
         {
             foreach ( ref file; FileArray )
@@ -5889,7 +6022,7 @@ class SCRIPT
             }
         }
         else
-        {   
+        {
             if ( !GetBooleanValue( expression_argument_array ) )
             {
                 Abort( "Invalid assertion : " ~ expression_argument_array.join( ' ' ) );
@@ -6572,10 +6705,10 @@ bool IsNatural(
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     return false;
 }
 
@@ -6636,7 +6769,7 @@ bool IsIdentifier(
         {
             return false;
         }
-        
+
         foreach ( character; text )
         {
             if ( !IsIdentifierCharacter( character ) )
@@ -6644,7 +6777,7 @@ bool IsIdentifier(
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -7456,7 +7589,7 @@ void main(
         writeln( "    Go[!] label|line_offset [condition]" );
         writeln( "    Repeat label|line_offset" );
         writeln( "    Call[!] label|line_offset {arguments}" );
-        writeln( "    Return" );
+        writeln( "    Return [expression]" );
         writeln( "    Exit" );
         writeln( "    Abort message" );
         writeln( "    Assert[!] condition" );
