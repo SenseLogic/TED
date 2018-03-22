@@ -6331,15 +6331,15 @@ class SCRIPT
                     {
                         FilesMustNotBeSelected = true;
                     }
-                    else if ( character == '/' )
+                    else if ( character == '#' )
                     {
                         FilesAreMarked = true;
                     }
-                    else if ( character == '+' )
+                    else if ( character == '?' )
                     {
                         FilesMustBeMarked = true;
                     }
-                    else if ( character == '-' )
+                    else if ( character == ':' )
                     {
                         FilesMustNotBeMarked = true;
                     }

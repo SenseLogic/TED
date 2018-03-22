@@ -183,9 +183,9 @@ $-offset : negative offset to the end of line
 % : select the matching files
 ^ : process only the selected files
 ~ : process only the ignored files
-/ : mark the matching files
-+ : process only the marked files
-- : process only the unmarked files
+# : mark the matching files
+? : process only the marked files
+: : process only the unmarked files
 * : process only the file with a line interval
 ! : don't process the files
 ```
