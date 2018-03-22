@@ -1,5 +1,3 @@
-Call! TestFunctions
-
 SetInputFolder IN/
 SetOutputFolder OUT/
 
@@ -24,13 +22,12 @@ Print! `Found :`
 Print^ buffer
 Print^ `\%buffer\`
 
+PrintLines
+
 Call! TestExpressions
-Call! TestIntegers 456
+Call! TestFunctions 456
 Call! TestLists
 Call! TestLoops 10
-Call! TestFunctions
-
-PrintLines
 
 Exit
 
@@ -38,26 +35,36 @@ Exit
 
 :TestExpressions
 
-Print! 1 + 2 * 3
 Assert! 1 + 2 * 3 == 7
-
-Print! 2 * 3 + 1
 Assert! 2 * 3 + 1 == 7
-
-Print! ( 1 + 2 ) * 3
 Assert! ( 1 + 2 ) * 3 == 9
+Assert! `Hello world!` @^ 6 @$ 5 == `world`
 
 Return
 
 ##
 
-:TestIntegers
+:TestFunctions
 
 Set! value = 123
 Set! value += %0
-Print! value
+Assert! value == 579
+
+Assert! `***` ~ MajorCase `test` ~ `***` == `***Test***`
+Assert! `***` ~ MajorCase ( LowerCase `TEST` ) ~ `***` == `***Test***`
+Assert! `***` ~ Twice `test` ~ `***` == `***testtest***`
+Assert! `***` ~ Twice ( Twice `test` ) ~ `***` == `***testtesttesttest***`
+
+Set! test = `TEST`
+Assert! `***\@Twice@Twice@MajorCase@LowerCase$test\***` == `***TestTestTestTest***`
 
 Return
+
+##
+
+:Twice
+
+Return %0 ~ %0
 
 ##
 
@@ -67,6 +74,8 @@ Set! file_name_list = ``
 Set file_name_list .= `\%InputName\`
 
 Print! file_name_list
+Print! file_name_list # 0
+Print! file_name_list # 1
 
 Return
 
@@ -79,48 +88,17 @@ Set! index = 0
 :loop
 Set! index += 1
 Print! index
-Go! loop index < %0
+Repeat! loop index < %0
 
+:loop
 FindText% 0 $
     #
-PrintRanges
-ReplaceText [ ]
+ReplaceText* [ ]
     #
     @
+Repeat* loop
 
+Print InputPath ~ `[ ` ~ LineIndex ~ ` .. ` ~ PostLineIndex ~ ` ] : ` ~ LineCount ~ ` ` ~ HasLineInterval
 PrintLines
 
 Return
-
-##
-
-:TestFunctions
-
-Set! value = `***` ~ MajorCase `test` ~ `***`
-Print! value
-Assert! value == `***Test***`
-
-Set! value = `***` ~ MajorCase ( LowerCase `TEST` ) ~ `***`
-Print! value
-Assert! value == `***Test***`
-
-Set! value = `***` ~ Twice `test` ~ `***`
-Print! value
-Assert! value == `***testtest***`
-
-Set! value = `***` ~ Twice ( Twice `test` ) ~ `***`
-Print! value
-Assert! value == `***testtesttesttest***`
-
-Set! test = `TEST`
-Set! value = `***\@Twice@Twice@MajorCase@LowerCase$test\***`
-Print! value
-Assert! value == `***TestTestTestTest***`
-
-Return
-
-##
-
-:Twice
-
-Return %0 ~ %0

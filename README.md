@@ -136,9 +136,8 @@ PushMarks
 PullMarks
 PopMarks
 Set[!] variable_name assignment_operator expression
-Go[!] label|line_offset [condition]
-Repeat label|line_offset
-Call[!] label|line_offset {arguments}
+Repeat[!] label [condition]
+Call[!] label {arguments}
 Return [expression]
 Exit
 Abort message
@@ -184,9 +183,10 @@ $-offset : negative offset to the end of line
 % : select the matching files
 ^ : process only the selected files
 ~ : process only the ignored files
-# : mark the matching files
-? : process only the marked files
-. : process only the unmarked files
+/ : mark the matching files
++ : process only the marked files
+- : process only the unmarked files
+* : process only the file with a line interval
 ! : don't process the files
 ```
 
@@ -208,22 +208,33 @@ $-offset : negative offset to the end of line
 `\%variable\` : file variable
 ```
 
-### Functions
+### Text functions
 
 ```
-GetLowerCase : convert to lowercase
-GetUpperCase : convert to uppercase
-GetMinorCase : convert to minorcase
-GetMajorCase : convert to majorcase
-GetCamelCase : convert to camelcase
-GetSnakeCase : convert to snakecase
+LowerCase text
+UpperCase text
+MinorCase text
+MajorCase text
+CamelCase text
+SnakeCase text
+LineCount text
+```
+
+### File functions
+
+```
+LineArray
+LineCount
+HasLineInterval
+LineIndex
+PostLineIndex
 ```
 
 ### Script variables
 
 ```
-$InputFolder : input folder
-$OutputFolder : output folder
+$InputFolder
+$OutputFolder
 ```
 
 ### File variables
@@ -236,6 +247,7 @@ $OutputFolder : output folder
 %InputBaseName : input file name without extension
 %InputExtension : input file extension
 %InputBaseExtension : input file extension without dot character
+
 %OutputPath : output file path
 %OutputFolder : output file folder
 %OutputSubFolder : output file sub-folder
@@ -264,10 +276,6 @@ $OutputFolder : output folder
 <<= : left shift
 >>= : right shift
 
-. : append
-
-~ : concatenate
-
 || : boolean or
 
 && : boolean and
@@ -279,7 +287,17 @@ $OutputFolder : output folder
 >= : higher or equal
 > : higher
 
-@ : line
+. : append
+
+~ : concatenate
+
+# : line at index
+#^ : lines from index
+#$ : lines until index
+
+@ : character at index
+@^ : characters from index
+@$ : characters until index
 
 + : add
 - : substract

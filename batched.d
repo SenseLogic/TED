@@ -110,26 +110,6 @@ class FILE
 
     // -- INQUIRIES
 
-    bool IsSelected(
-        )
-    {
-        return
-            ( ( Script.FilesMustBeSelected
-                && ItIsSelected )
-              || ( Script.FilesMustNotBeSelected
-                   && !ItIsSelected )
-              || ( !Script.FilesMustBeSelected
-                   && !Script.FilesMustNotBeSelected ) )
-              && ( ( Script.FilesMustBeMarked
-                     && ItIsMarked )
-                   || ( Script.FilesMustNotBeMarked
-                        && !ItIsMarked )
-                   || ( !Script.FilesMustBeMarked
-                        && !Script.FilesMustNotBeMarked ) );
-    }
-
-    // ~~
-
     bool HasLineInterval(
         )
     {
@@ -140,18 +120,37 @@ class FILE
 
     // ~~
 
+    bool IsSelected(
+        )
+    {
+        return
+            ( ( Script.FilesMustBeSelected
+                && ItIsSelected )
+              || ( Script.FilesMustNotBeSelected
+                   && !ItIsSelected )
+              || ( !Script.FilesMustBeSelected
+                   && !Script.FilesMustNotBeSelected ) )
+            && ( ( Script.FilesMustBeMarked
+                   && ItIsMarked )
+                 || ( Script.FilesMustNotBeMarked
+                      && !ItIsMarked )
+                 || ( !Script.FilesMustBeMarked
+                        && !Script.FilesMustNotBeMarked ) )
+            && ( ( Script.FilesMustHaveLineInterval
+                   && HasLineInterval() )
+                 || !Script.FilesMustHaveLineInterval );
+    }
+
+    // ~~
+
     long GetValidLineIndex(
         long line_index
         )
     {
-        if ( line_index < 0 )
+        if ( line_index < 0
+             || line_index > LineArray.length )
         {
-            line_index = 0;
-        }
-
-        if ( line_index > LineArray.length )
-        {
-            line_index = LineArray.length;
+            Abort( "Invalid line index : " ~ line_index.to!string() );
         }
 
         return line_index;
@@ -167,41 +166,41 @@ class FILE
         {
             return GetValidLineIndex( LineIndex );
         }
-        else if ( line_index_expression.startsWith( "[+" ) )
-        {
-            return GetValidLineIndex( LineIndex + line_index_expression[ 2 .. $ ].GetInteger() );
-        }
         else if ( line_index_expression.startsWith( "[-" ) )
         {
-            return GetValidLineIndex( LineIndex - line_index_expression[ 2 .. $ ].GetInteger() );
+            return GetValidLineIndex( LineIndex - Script.GetValue( line_index_expression[ 2 .. $ ], this ).GetInteger() );
+        }
+        else if ( line_index_expression.startsWith( "[+" ) )
+        {
+            return GetValidLineIndex( LineIndex + Script.GetValue( line_index_expression[ 2 .. $ ], this ).GetInteger() );
         }
         else if ( line_index_expression == "]" )
         {
             return GetValidLineIndex( PostLineIndex );
         }
-        else if ( line_index_expression.startsWith( "]+" ) )
-        {
-            return GetValidLineIndex( PostLineIndex + line_index_expression[ 2 .. $ ].GetInteger() );
-        }
         else if ( line_index_expression.startsWith( "]-" ) )
         {
-            return GetValidLineIndex( PostLineIndex - line_index_expression[ 2 .. $ ].GetInteger() );
+            return GetValidLineIndex( PostLineIndex - Script.GetValue( line_index_expression[ 2 .. $ ], this ).GetInteger() );
+        }
+        else if ( line_index_expression.startsWith( "]+" ) )
+        {
+            return GetValidLineIndex( PostLineIndex + Script.GetValue( line_index_expression[ 2 .. $ ], this ).GetInteger() );
         }
         else if ( line_index_expression == "$" )
         {
             return GetValidLineIndex( LineArray.length.to!long() );
         }
-        else if ( line_index_expression.startsWith( "$+" ) )
-        {
-            return GetValidLineIndex( LineArray.length.to!long() + line_index_expression[ 2 .. $ ].GetInteger() );
-        }
         else if ( line_index_expression.startsWith( "$-" ) )
         {
-            return GetValidLineIndex( LineArray.length.to!long() - line_index_expression[ 2 .. $ ].GetInteger() );
+            return GetValidLineIndex( LineArray.length.to!long() - Script.GetValue( line_index_expression[ 2 .. $ ], this ).GetInteger() );
+        }
+        else if ( line_index_expression.startsWith( "$+" ) )
+        {
+            return GetValidLineIndex( LineArray.length.to!long() + Script.GetValue( line_index_expression[ 2 .. $ ], this ).GetInteger() );
         }
         else
         {
-            return GetValidLineIndex( line_index_expression.GetInteger() );
+            return GetValidLineIndex( Script.GetValue( line_index_expression, this ).GetInteger() );
         }
     }
 
@@ -368,7 +367,7 @@ class FILE
                 Abort( "Can't read file : " ~ InputPath );
             }
 
-            LineArray = file_text.split( '\n' );
+            LineArray = file_text.Split();
             LineIndex = 0;
             PostLineIndex = LineArray.length;
             LineHasChangedArray.length = LineArray.length;
@@ -468,7 +467,7 @@ class FILE
         string
             file_text;
 
-        file_text = LineArray.join( '\n' );
+        file_text = LineArray.Join();
 
         writeln( "Writing file : ", OutputPath );
 
@@ -1306,7 +1305,7 @@ class FILE
             expression_index,
             first_line_index,
             post_line_index;
-        Captures!( string, ulong )
+        Captures!( string )
             match;
 
         first_line_index = GetLineIndex( line_index_expression );
@@ -1368,7 +1367,7 @@ class FILE
         long
             expression_index,
             post_line_index;
-        Captures!( string, ulong )
+        Captures!( string )
             match;
 
         post_line_index = GetLineIndex( post_line_index_expression, LineIndex );
@@ -1436,7 +1435,7 @@ class FILE
             {
                 line = LineArray[ line_index ];
 
-                character_index = line.GetCharacterIndex( character_index_expression );
+                character_index = Script.GetCharacterIndex( line, character_index_expression, this );
 
                 SetLineAtIndex(
                     line[ 0 .. character_index ]
@@ -1627,8 +1626,8 @@ class FILE
         first_line_index = GetLineIndex( line_index_expression );
         post_line_index = GetLineIndex( post_line_index_expression, first_line_index );
 
-        line_array = [];
-        line_has_changed_array = [];
+        line_array = null;
+        line_has_changed_array = null;
 
         for ( line_index = first_line_index;
               line_index < post_line_index;
@@ -1668,8 +1667,8 @@ class FILE
         first_line_index = GetLineIndex( line_index_expression );
         post_line_index = GetLineIndex( post_line_index_expression, first_line_index );
 
-        line_array = [];
-        line_has_changed_array = [];
+        line_array = null;
+        line_has_changed_array = null;
 
         for ( line_index = first_line_index;
               line_index < post_line_index;
@@ -1740,7 +1739,7 @@ class FILE
         {
             Script.SetVariable(
                 variable_name,
-                LineArray[ first_line_index .. post_line_index ].join( '\n' ),
+                LineArray[ first_line_index .. post_line_index ].Join(),
                 this
                 );
         }
@@ -1752,15 +1751,15 @@ class FILE
             {
                 line = LineArray[ line_index ];
 
-                character_index = line.GetCharacterIndex( character_index_expression );
-                post_character_index = line.GetCharacterIndex( post_character_index_expression );
+                character_index = Script.GetCharacterIndex( line, character_index_expression, this );
+                post_character_index = Script.GetCharacterIndex( line, post_character_index_expression, this );
 
                 clipped_line_array[ line_index - first_line_index ] = line[ character_index .. post_character_index ];
             }
 
             Script.SetVariable(
                 variable_name,
-                clipped_line_array.join( '\n' ),
+                clipped_line_array.Join(),
                 this
                 );
         }
@@ -1799,7 +1798,7 @@ class FILE
         string[]
             variable_line_array;
 
-        variable_line_array = Script.GetVariable( variable_name, this ).split( '\n' );
+        variable_line_array = Script.GetVariable( variable_name, this ).Split();
 
         if ( character_index_expression.length == 0 )
         {
@@ -1831,7 +1830,7 @@ class FILE
               ++line_index )
         {
             line = LineArray[ line_index ];
-            character_index = line.GetCharacterIndex( character_index_expression );
+            character_index = Script.GetCharacterIndex( line, character_index_expression, this );
 
             SetLineAtIndex( line[ 0 .. character_index ] ~ text ~ line[ character_index .. $ ], line_index );
         }
@@ -1913,8 +1912,8 @@ class FILE
         {
             line = LineArray[ line_index ];
 
-            character_index = line.GetCharacterIndex( character_index_expression );
-            post_character_index = line.GetCharacterIndex( post_character_index_expression );
+            character_index = Script.GetCharacterIndex( line, character_index_expression, this );
+            post_character_index = Script.GetCharacterIndex( line, post_character_index_expression, this );
 
             SetLineAtIndex(
                 line[ character_index .. post_character_index ],
@@ -1947,8 +1946,8 @@ class FILE
         {
             line = LineArray[ line_index ];
 
-            character_index = line.GetCharacterIndex( character_index_expression );
-            post_character_index = line.GetCharacterIndex( post_character_index_expression );
+            character_index = Script.GetCharacterIndex( line, character_index_expression, this );
+            post_character_index = Script.GetCharacterIndex( line, post_character_index_expression, this );
 
             SetLineAtIndex(
                 line[ 0 .. character_index ] ~ line[ post_character_index .. $ ],
@@ -2152,7 +2151,8 @@ class SCRIPT
         FilesMustNotBeSelected,
         FilesAreMarked,
         FilesMustBeMarked,
-        FilesMustNotBeMarked;
+        FilesMustNotBeMarked,
+        FilesMustHaveLineInterval;
 
     // -- OPERATIONS
 
@@ -2172,6 +2172,90 @@ class SCRIPT
         exit( -1 );
     }
 
+    // ~~
+
+    long GetValidLineIndex(
+        string[] line_array,
+        long line_index
+        )
+    {
+        if ( line_index < 0
+             || line_index > line_array.length )
+        {
+            Abort( "Invalid line index : " ~ line_index.to!string() );
+        }
+
+        return line_index;
+    }
+
+    // ~~
+
+    long GetLineIndex(
+        string[] line_array,
+        string line_index_expression,
+        FILE file = null
+        )
+    {
+        if ( line_index_expression == "$" )
+        {
+            return GetValidLineIndex( line_array, line_array.length.to!long() );
+        }
+        else if ( line_index_expression.startsWith( "$-" ) )
+        {
+            return GetValidLineIndex( line_array, line_array.length.to!long() - Script.GetValue( line_index_expression[ 2 .. $ ], file ).GetInteger() );
+        }
+        else if ( line_index_expression.startsWith( "$+" ) )
+        {
+            return GetValidLineIndex( line_array, line_array.length.to!long() + Script.GetValue( line_index_expression[ 2 .. $ ], file ).GetInteger() );
+        }
+        else
+        {
+            return GetValidLineIndex( line_array, Script.GetValue( line_index_expression, file ).GetInteger() );
+        }
+    }
+
+    // ~~
+
+    long GetValidCharacterIndex(
+        string line,
+        long character_index
+        )
+    {
+        if ( character_index < 0
+             || character_index > line.length )
+        {
+            Abort( "Invalid character index : " ~ character_index.to!string() );
+        }
+
+        return character_index;
+    }
+
+    // ~~
+
+    long GetCharacterIndex(
+        string line,
+        string character_index_expression,
+        FILE file = null
+        )
+    {
+        if ( character_index_expression == "$" )
+        {
+            return GetValidCharacterIndex( line, line.length.to!long() );
+        }
+        else if ( character_index_expression.startsWith( "$-" ) )
+        {
+            return GetValidCharacterIndex( line, line.length.to!long() - Script.GetValue( character_index_expression[ 2 .. $ ], file ).GetInteger() );
+        }
+        else if ( character_index_expression.startsWith( "$+" ) )
+        {
+            return GetValidCharacterIndex( line, line.length.to!long() + Script.GetValue( character_index_expression[ 2 .. $ ], file ).GetInteger() );
+        }
+        else
+        {
+            return GetValidCharacterIndex( line, Script.GetValue( character_index_expression, file ).GetInteger() );
+        }
+    }
+    
     // ~~
 
     string RemoveLastTabulation(
@@ -2246,7 +2330,7 @@ class SCRIPT
 
         if ( file_path.exists() )
         {
-            line_array = file_path.readText().replace( "\r", "" ).replace( "\t", "    " ).split( '\n' );
+            line_array = file_path.readText().replace( "\r", "" ).replace( "\t", "    " ).Split();
 
             foreach ( line_index; 0 .. line_array.length )
             {
@@ -2613,11 +2697,11 @@ class SCRIPT
                     = Unquote( argument_array[ argument_index ], file );
             }
 
-            return unquoted_argument_array.join( '\n' ).split( '\n' );
+            return unquoted_argument_array.Join().Split();
         }
         else
         {
-            return argument_array.join( '\n' ).split( '\n' );
+            return argument_array.Join().Split();
         }
     }
 
@@ -2681,7 +2765,7 @@ class SCRIPT
             argument_array ~= GetArgument();
         }
 
-        return argument_array.join( '\n' ).split( '\n' );
+        return argument_array.Join().Split();
     }
 
     // ~~
@@ -2690,14 +2774,10 @@ class SCRIPT
         long line_index
         )
     {
-        if ( line_index < 0 )
+        if ( line_index < 0
+             || line_index > LineArray.length )
         {
-            line_index = 0;
-        }
-
-        if ( line_index > LineArray.length )
-        {
-            line_index = LineArray.length;
+            Abort( "Invalid line index : " ~ line_index.to!string() );
         }
 
         return line_index;
@@ -2709,57 +2789,30 @@ class SCRIPT
         string label
         )
     {
+        long
+            line_index;
         string
             label_line;
 
-        if ( label.IsInteger() )
+        label_line = ":" ~ label;
+        
+        for ( line_index = LineIndex - 1;
+              line_index >= 0;
+              --line_index )
         {
-            return GetValidLineIndex( LineIndex + label.GetInteger() );
-        }
-        else
-        {
-            label_line = ":" ~ label;
-
-            foreach ( line_index; 0 .. LineArray.length )
+            if ( LineArray[ line_index ] == label_line )
             {
-                if ( LineArray[ line_index ] == label_line )
-                {
-                    return line_index;
-                }
+                return line_index;
             }
         }
 
-        Abort( "Invalid label : " ~ label );
-
-        return 0;
-    }
-
-    // ~~
-
-    long GetLabelLineIndex(
-        string label,
-        long line_index
-        )
-    {
-        string
-            label_line;
-
-        if ( label.IsInteger() )
+        for ( line_index = LineIndex;
+              line_index < LineArray.length;
+              ++line_index )
         {
-            return GetValidLineIndex( LineIndex + label.GetInteger() );
-        }
-        else
-        {
-            label_line = ":" ~ label;
-
-            while ( line_index >= 0 )
+            if ( LineArray[ line_index ] == label_line )
             {
-                if ( LineArray[ line_index ] == label_line )
-                {
-                    return line_index;
-                }
-
-                --line_index;
+                return line_index;
             }
         }
 
@@ -2918,10 +2971,14 @@ class SCRIPT
             {
                 return *variable;
             }
+            else
+            {
+                return GetFunctionValue( variable_name, null, file );
+            }
         }
-
+        
         Abort( "Invalid variable : " ~ variable_name );
-
+        
         return "";
     }
 
@@ -2931,21 +2988,13 @@ class SCRIPT
         string token
         )
     {
-        if ( token == "." )
+        if ( token == "||" )
         {
-            return 9;
-        }
-        else if ( token == "~" )
-        {
-            return 8;
-        }
-        else if ( token == "||" )
-        {
-            return 7;
+            return 10;
         }
         else if ( token == "&&" )
         {
-            return 6;
+            return 9;
         }
         else if ( token == "<"
              || token == "<="
@@ -2954,9 +3003,25 @@ class SCRIPT
              || token == ">"
              || token == ">=" )
         {
+            return 8;
+        }
+        else if ( token == "." )
+        {
+            return 7;
+        }
+        else if ( token == "~" )
+        {
+            return 6;
+        }
+        else if ( token == "#"
+             || token == "#^"
+             || token == "#$" )
+        {
             return 5;
         }
-        else if ( token == "@" )
+        else if ( token == "@"
+             || token == "@^"
+             || token == "@$" )
         {
             return 4;
         }
@@ -3070,6 +3135,41 @@ class SCRIPT
                   && argument_array.length == 1 )
         {
             return GetSnakeCaseText( argument_array[ 0 ] );
+        }
+        else if ( function_name == "LineCount"
+                  && argument_array.length == 1 )
+        {
+            return argument_array[ 0 ].Split().length.to!string();
+        }
+        else if ( function_name == "LineArray"
+                  && argument_array.length == 0
+                  && file !is null )
+        {
+            return file.LineArray.Join();
+        }
+        else if ( function_name == "LineCount"
+                  && argument_array.length == 0
+                  && file !is null )
+        {
+            return file.LineArray.length.to!string();
+        }
+        else if ( function_name == "HasLineInterval"
+                  && argument_array.length == 0
+                  && file !is null )
+        {
+            return file.HasLineInterval() ? "1" : "0";
+        }
+        else if ( function_name == "LineIndex"
+                  && argument_array.length == 0
+                  && file !is null )
+        {
+            return file.LineIndex.to!string();
+        }
+        else if ( function_name == "PostLineIndex"
+                  && argument_array.length == 0
+                  && file !is null )
+        {
+            return file.PostLineIndex.to!string();
         }
         else
         {
@@ -3185,7 +3285,10 @@ class SCRIPT
         {
             return Unquote( token, file );
         }
-        else if ( token.IsInteger() )
+        else if ( token.IsInteger()
+                  || token == "$"
+                  || token.startsWith( "$-" )
+                  || token.startsWith( "$+" ) )
         {
             return token;
         }
@@ -3204,6 +3307,7 @@ class SCRIPT
     {
         long
             binary_operator_token_index,
+            character_index,
             first_value_integer,
             line_index,
             second_value_integer;
@@ -3350,15 +3454,45 @@ class SCRIPT
                     {
                         return ( first_value > second_value ) ? "1" : "0";
                     }
-                    else if ( binary_operator == "@" )
+                    else if ( binary_operator == "#"
+                              || binary_operator == "#^"
+                              || binary_operator == "#$" )
                     {
-                        line_array = first_value.split( '\n' );
-                        line_index = line_array.GetLineIndex( second_value );
+                        line_array = first_value.Split();
+                        line_index = GetLineIndex( line_array, second_value, file );
 
-                        if ( line_index >= 0
+                        if ( binary_operator == "#"
                              && line_index < line_array.length )
                         {
                             return line_array[ line_index ];
+                        }
+                        else if ( binary_operator == "#^" )
+                        {
+                            return line_array[ line_index .. $ ].Join();
+                        }
+                        else if ( binary_operator == "#$" )
+                        {
+                            return line_array[ 0 .. line_index ].Join();
+                        }
+                    }
+                    else if ( binary_operator == "@"
+                              || binary_operator == "@^"
+                              || binary_operator == "@$" )
+                    {
+                        character_index = GetCharacterIndex( first_value, second_value, file );
+
+                        if ( binary_operator == "@"
+                             && character_index < first_value.length )
+                        {
+                            return first_value[ character_index ].to!string();
+                        }
+                        else if ( binary_operator == "@^" )
+                        {
+                            return first_value[ character_index .. $ ];
+                        }
+                        else if ( binary_operator == "@$" )
+                        {
+                            return first_value[ 0 .. character_index ];
                         }
                     }
                 }
@@ -3423,7 +3557,7 @@ class SCRIPT
 
         if ( assignment_operator == ":=" )
         {
-            variable_value = Unquote( expression_token_array, file ).join( '\n' );
+            variable_value = Unquote( expression_token_array, file ).Join();
         }
         else
         {
@@ -3640,7 +3774,7 @@ class SCRIPT
         {
             writeln( variable_name, " : " );
 
-            variable_line_array = variable_value.split( '\n' );
+            variable_line_array = variable_value.Split();
 
             foreach ( variable_line; variable_line_array )
             {
@@ -3946,7 +4080,7 @@ class SCRIPT
     void ReadFiles(
         )
     {
-        FileArray = [];
+        FileArray = null;
 
         IncludeFiles();
     }
@@ -4025,7 +4159,7 @@ class SCRIPT
 
         if ( file_path_filter_argument_array.length == 0 )
         {
-            FileArray = [];
+            FileArray = null;
         }
         else
         {
@@ -4125,7 +4259,7 @@ class SCRIPT
             }
         }
 
-        FileArray = [];
+        FileArray = null;
     }
 
     // ~~
@@ -5837,29 +5971,36 @@ class SCRIPT
 
     // ~~
 
-    void Go(
+    void Repeat(
         )
     {
         long
             label_line_index;
+        string[]
+            condition_argument_array;
 
-        label_line_index = GetLabelLineIndex( Unquote( GetArgument() ) ) - 1;
+        label_line_index = GetLabelLineIndex( Unquote( GetArgument() ) );
 
         if ( HasArgument() )
         {
+            condition_argument_array = GetArgumentArray();
+            
             if ( FilesAreIterated )
             {
                 foreach( ref file; FileArray )
                 {
-                    if ( GetBooleanValue( GetArgumentArray(), file ) )
+                    if ( file.IsSelected()
+                         && GetBooleanValue( condition_argument_array, file ) )
                     {
                         LineIndex = label_line_index;
+                        
+                        break;
                     }
                 }
             }
             else
             {
-                if ( GetBooleanValue( GetArgumentArray() ) )
+                if ( GetBooleanValue( condition_argument_array ) )
                 {
                     LineIndex = label_line_index;
                 }
@@ -5867,33 +6008,21 @@ class SCRIPT
         }
         else
         {
-            LineIndex = label_line_index;
-        }
-    }
-
-    // ~~
-
-    void Repeat(
-        )
-    {
-        long
-            label_line_index;
-        long *
-            repetition_count;
-        string
-            label;
-
-        label = Unquote( GetArgument() );
-        label_line_index = GetLabelLineIndex( label, LineIndex - 1 );
-
-        foreach( ref file; FileArray )
-        {
-            if ( file.IsSelected()
-                 && file.HasLineInterval() )
+            if ( FilesAreIterated )
             {
-                LineIndex = label_line_index - 1;
-
-                break;
+                foreach( ref file; FileArray )
+                {
+                    if ( file.IsSelected() )
+                    {
+                        LineIndex = label_line_index;
+                        
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                LineIndex = label_line_index;
             }
         }
     }
@@ -6179,6 +6308,8 @@ class SCRIPT
                 FilesAreMarked = false;
                 FilesMustBeMarked = false;
                 FilesMustNotBeMarked = false;
+                
+                FilesMustHaveLineInterval = false;
 
                 while ( command.length > 0 )
                 {
@@ -6200,17 +6331,21 @@ class SCRIPT
                     {
                         FilesMustNotBeSelected = true;
                     }
-                    else if ( character == '#' )
+                    else if ( character == '/' )
                     {
                         FilesAreMarked = true;
                     }
-                    else if ( character == '?' )
+                    else if ( character == '+' )
                     {
                         FilesMustBeMarked = true;
                     }
-                    else if ( character == '.' )
+                    else if ( character == '-' )
                     {
                         FilesMustNotBeMarked = true;
+                    }
+                    else if ( character == '*' )
+                    {
+                        FilesMustHaveLineInterval = true;
                     }
                     else
                     {
@@ -6587,10 +6722,6 @@ class SCRIPT
                 else if ( command == "Set" )
                 {
                     Set();
-                }
-                else if ( command == "Go" )
-                {
-                    Go();
                 }
                 else if ( command == "Repeat" )
                 {
@@ -7066,96 +7197,6 @@ string GetSnakeCaseText(
 
 // ~~
 
-long GetValidCharacterIndex(
-    string line,
-    long character_index
-    )
-{
-    if ( character_index < 0 )
-    {
-        character_index = 0;
-    }
-
-    if ( character_index > line.length )
-    {
-        character_index = line.length;
-    }
-
-    return character_index;
-}
-
-// ~~
-
-long GetCharacterIndex(
-    string line,
-    string character_index_expression
-    )
-{
-    if ( character_index_expression == "$" )
-    {
-        return line.GetValidCharacterIndex( line.length.to!long() );
-    }
-    else if ( character_index_expression.startsWith( "$+" ) )
-    {
-        return line.GetValidCharacterIndex( line.length.to!long() + character_index_expression[ 2 .. $ ].GetInteger() );
-    }
-    else if ( character_index_expression.startsWith( "$-" ) )
-    {
-        return line.GetValidCharacterIndex( line.length.to!long() - character_index_expression[ 2 .. $ ].GetInteger() );
-    }
-    else
-    {
-        return line.GetValidCharacterIndex( character_index_expression.GetInteger() );
-    }
-}
-
-// ~~
-
-long GetValidLineIndex(
-    string[] line_array,
-    long line_index
-    )
-{
-    if ( line_index < 0 )
-    {
-        line_index = 0;
-    }
-
-    if ( line_index > line_array.length )
-    {
-        line_index = line_array.length;
-    }
-
-    return line_index;
-}
-
-// ~~
-
-long GetLineIndex(
-    string[] line_array,
-    string line_index_expression
-    )
-{
-    if ( line_index_expression == "$" )
-    {
-        return line_array.GetValidLineIndex( line_array.length.to!long() );
-    }
-    else if ( line_index_expression.startsWith( "$+" ) )
-    {
-        return line_array.GetValidLineIndex( line_array.length.to!long() + line_index_expression[ 2 .. $ ].GetInteger() );
-    }
-    else if ( line_index_expression.startsWith( "$-" ) )
-    {
-        return line_array.GetValidLineIndex( line_array.length.to!long() - line_index_expression[ 2 .. $ ].GetInteger() );
-    }
-    else
-    {
-        return line_array.GetValidLineIndex( line_index_expression.GetInteger() );
-    }
-}
-
-// ~~
-
 string ReplaceTabulations(
     string line,
     long tabulation_space_count
@@ -7449,6 +7490,31 @@ void SplitFilePathFilter(
 
 // ~~
 
+string[] Split(
+    string text
+    )
+{
+    if ( text.length == 0 )
+    {
+        return [ "" ];
+    }
+    else
+    {
+        return text.split( '\n' );
+    }
+}
+
+// ~~
+
+string Join(
+    string[] line_array
+    )
+{
+    return line_array.join( '\n' );
+}
+
+// ~~
+
 void main(
     string[] argument_array
     )
@@ -7586,9 +7652,8 @@ void main(
         writeln( "    PullMarks" );
         writeln( "    PopMarks" );
         writeln( "    Set[!] variable_name assignment_operator expression" );
-        writeln( "    Go[!] label|line_offset [condition]" );
-        writeln( "    Repeat label|line_offset" );
-        writeln( "    Call[!] label|line_offset {arguments}" );
+        writeln( "    Repeat[!] label [condition]" );
+        writeln( "    Call[!] label {arguments}" );
         writeln( "    Return [expression]" );
         writeln( "    Exit" );
         writeln( "    Abort message" );
