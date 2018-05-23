@@ -3175,7 +3175,7 @@ class SCRIPT
         {
             label_line_index = GetLabelLineIndex( function_name );
 
-            call = new CALL;
+            call = new CALL();
             call.ArgumentArray = argument_array;
             call.ReturnLineIndex = LineIndex;
 
@@ -4124,7 +4124,7 @@ class SCRIPT
                     input_file_path = folder_entry.name();
                     output_file_path = OutputFolderPath ~ input_file_path[ InputFolderPath.length .. $ ];
 
-                    file = new FILE;
+                    file = new FILE();
                     file.ReadFile( input_file_path, output_file_path );
                     file.Select();
 
@@ -4205,7 +4205,7 @@ class SCRIPT
         {
             file_path = Unquote( file_path_argument );
 
-            file = new FILE;
+            file = new FILE();
             file.CreateFile( InputFolderPath ~ file_path, OutputFolderPath ~ file_path );
             file.Select();
 
@@ -5715,7 +5715,7 @@ class SCRIPT
         {
             if ( file.IsSelected() )
             {
-                file_interval = new FILE_INTERVAL;
+                file_interval = new FILE_INTERVAL();
                 file_interval.LineIndex = file.LineIndex;
                 file_interval.PostLineIndex = file.PostLineIndex;
                 file_interval.Indentation = file.Indentation;
@@ -5795,7 +5795,7 @@ class SCRIPT
         {
             if ( file.IsSelected() )
             {
-                file_selection = new FILE_SELECTION;
+                file_selection = new FILE_SELECTION();
                 file_selection.ItIsSelected = file.ItIsSelected;
 
                 file.SelectionArray ~= file_selection;
@@ -5868,7 +5868,7 @@ class SCRIPT
         {
             if ( file.IsSelected() )
             {
-                file_mark = new FILE_MARK;
+                file_mark = new FILE_MARK();
                 file_mark.ItIsMarked = file.ItIsMarked;
 
                 file.MarkArray ~= file_mark;
@@ -6048,7 +6048,7 @@ class SCRIPT
             {
                 if ( file.IsSelected() )
                 {
-                    call = new CALL;
+                    call = new CALL();
                     call.ArgumentArray = Unquote( GetArgumentArray(), file );
                     call.ReturnLineIndex = LineIndex;
 
@@ -6065,7 +6065,7 @@ class SCRIPT
         }
         else
         {
-            call = new CALL;
+            call = new CALL();
             call.ArgumentArray = Unquote( GetArgumentArray() );
             call.ReturnLineIndex = LineIndex;
 
@@ -6171,7 +6171,7 @@ class SCRIPT
 
         line_index = LineIndex;
 
-        script = new SCRIPT;
+        script = new SCRIPT();
         script.Load( Unquote( GetArgument() ) );
 
         LineArray = LineArray[ 0 .. line_index ] ~ script.LineArray ~ LineArray[ line_index + 2 .. $ ];
@@ -6204,7 +6204,7 @@ class SCRIPT
                 {
                     old_script = Script;
 
-                    Script = new SCRIPT;
+                    Script = new SCRIPT();
                     Script.ExecuteScript(
                         Unquote( script_file_path_argument, file ),
                         Unquote( script_argument_array, file )
@@ -6218,7 +6218,7 @@ class SCRIPT
         {
             old_script = Script;
 
-            Script = new SCRIPT;
+            Script = new SCRIPT();
             Script.ExecuteScript(
                 Unquote( script_file_path_argument ),
                 Unquote( script_argument_array )
@@ -7550,7 +7550,7 @@ void main(
 
     if ( argument_array.length >= 1 )
     {
-        Script = new SCRIPT;
+        Script = new SCRIPT();
         Script.ExecuteScript( argument_array[ 0 ], argument_array[ 1 .. $ ] );
     }
     else
