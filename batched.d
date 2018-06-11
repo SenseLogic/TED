@@ -18,8 +18,6 @@
     along with Batched.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// == LOCAL
-
 // -- IMPORTS
 
 import core.stdc.stdlib : exit;
@@ -2255,7 +2253,7 @@ class SCRIPT
             return GetValidCharacterIndex( line, Script.GetValue( character_index_expression, file ).GetInteger() );
         }
     }
-    
+
     // ~~
 
     string RemoveLastTabulation(
@@ -2795,7 +2793,7 @@ class SCRIPT
             label_line;
 
         label_line = ":" ~ label;
-        
+
         for ( line_index = LineIndex - 1;
               line_index >= 0;
               --line_index )
@@ -2976,9 +2974,9 @@ class SCRIPT
                 return GetFunctionValue( variable_name, null, file );
             }
         }
-        
+
         Abort( "Invalid variable : " ~ variable_name );
-        
+
         return "";
     }
 
@@ -5984,7 +5982,7 @@ class SCRIPT
         if ( HasArgument() )
         {
             condition_argument_array = GetArgumentArray();
-            
+
             if ( FilesAreIterated )
             {
                 foreach( ref file; FileArray )
@@ -5993,7 +5991,7 @@ class SCRIPT
                          && GetBooleanValue( condition_argument_array, file ) )
                     {
                         LineIndex = label_line_index;
-                        
+
                         break;
                     }
                 }
@@ -6015,7 +6013,7 @@ class SCRIPT
                     if ( file.IsSelected() )
                     {
                         LineIndex = label_line_index;
-                        
+
                         break;
                     }
                 }
@@ -6308,7 +6306,7 @@ class SCRIPT
                 FilesAreMarked = false;
                 FilesMustBeMarked = false;
                 FilesMustNotBeMarked = false;
-                
+
                 FilesMustHaveLineInterval = false;
 
                 while ( command.length > 0 )
@@ -6929,7 +6927,7 @@ bool IsQuoteCharacter(
 
 // ~~
 
-bool IsLowerCaseSetter(
+bool IsLowerCaseLetter(
     dchar character
     )
 {
@@ -6953,7 +6951,7 @@ bool IsLowerCaseSetter(
 
 // ~~
 
-bool IsUpperCaseSetter(
+bool IsUpperCaseLetter(
     dchar character
     )
 {
@@ -6981,8 +6979,8 @@ bool IsSetter(
     )
 {
     return
-        IsLowerCaseSetter( character )
-        || IsUpperCaseSetter( character );
+        IsLowerCaseLetter( character )
+        || IsUpperCaseLetter( character );
 }
 
 // ~~
@@ -7145,7 +7143,7 @@ string GetCamelCaseText(
 
     foreach ( dchar character; text )
     {
-        if ( character.IsLowerCaseSetter()
+        if ( character.IsLowerCaseLetter()
              && !prior_character.IsSetter() )
         {
             camel_case_text ~= character.GetUpperCaseCharacter();
@@ -7177,12 +7175,12 @@ string GetSnakeCaseText(
 
     foreach ( dchar character; text )
     {
-        if ( ( prior_character.IsLowerCaseSetter()
-               && ( character.IsUpperCaseSetter()
+        if ( ( prior_character.IsLowerCaseLetter()
+               && ( character.IsUpperCaseLetter()
                     || character.IsDigit() ) )
              || ( prior_character.IsDigit()
-                  && ( character.IsLowerCaseSetter()
-                       || character.IsUpperCaseSetter() ) ) )
+                  && ( character.IsLowerCaseLetter()
+                       || character.IsUpperCaseLetter() ) ) )
         {
             snake_case_text ~= '_';
         }
