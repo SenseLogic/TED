@@ -852,9 +852,9 @@ class FILE
         string post_line_index_expression,
         string old_text,
         string new_text,
-        bool it_must_be_unquoted,
-        bool it_must_be_quoted,
-        bool it_must_be_in_identifier
+        bool old_text_must_be_unquoted,
+        bool old_text_must_be_quoted,
+        bool old_text_must_be_in_identifier
         )
     {
         long
@@ -867,7 +867,7 @@ class FILE
         foreach ( line_index; first_line_index .. post_line_index )
         {
             SetLineAtIndex(
-                LineArray[ line_index ].ReplaceText( old_text, new_text, it_must_be_unquoted, it_must_be_quoted, it_must_be_in_identifier ),
+                LineArray[ line_index ].ReplaceText( old_text, new_text, old_text_must_be_unquoted, old_text_must_be_quoted, old_text_must_be_in_identifier ),
                 line_index
                 );
         }
@@ -2316,7 +2316,7 @@ class SCRIPT
         )
     {
         bool
-            it_is_in_string_literal;
+            character_is_in_string_literal;
         char
             character;
         long
@@ -2351,7 +2351,7 @@ class SCRIPT
                         LineIndexArray ~= line_index + 1;
                         FilePathArray ~= file_path;
 
-                        it_is_in_string_literal = false;
+                        character_is_in_string_literal = false;
 
                         for ( character_index = 0;
                               character_index < line.length;
@@ -2359,13 +2359,13 @@ class SCRIPT
                         {
                             character = line[ character_index ];
 
-                            if ( it_is_in_string_literal )
+                            if ( character_is_in_string_literal )
                             {
                                 LineArray[ $ - 1 ] ~= character;
 
                                 if ( character == '`' )
                                 {
-                                    it_is_in_string_literal = false;
+                                    character_is_in_string_literal = false;
                                 }
                                 else if ( character == '\\'
                                           && character_index + 1 < line.length )
@@ -2398,7 +2398,7 @@ class SCRIPT
 
                                 if ( character == '`' )
                                 {
-                                    it_is_in_string_literal = true;
+                                    character_is_in_string_literal = true;
                                 }
                             }
                         }
@@ -2419,7 +2419,7 @@ class SCRIPT
         )
     {
         bool
-            it_is_in_string_literal;
+            character_is_in_string_literal;
         char
             character,
             delimiter_character;
@@ -2446,18 +2446,18 @@ class SCRIPT
                 ++character_index;
             }
 
-            it_is_in_string_literal = false;
+            character_is_in_string_literal = false;
             delimiter_character = 0;
 
             while ( character_index < argument.length )
             {
                 character = argument[ character_index ];
 
-                if ( it_is_in_string_literal )
+                if ( character_is_in_string_literal )
                 {
                     if ( character == delimiter_character )
                     {
-                        it_is_in_string_literal = false;
+                        character_is_in_string_literal = false;
                     }
                     else if ( character == '\\' )
                     {
@@ -2472,7 +2472,7 @@ class SCRIPT
                          || character == '\"'
                          || character == '`' )
                     {
-                        it_is_in_string_literal = true;
+                        character_is_in_string_literal = true;
 
                         delimiter_character = character;
                     }
@@ -4573,9 +4573,9 @@ class SCRIPT
     // ~~
 
     void ReplaceText(
-        bool it_must_be_unquoted,
-        bool it_must_be_quoted,
-        bool it_must_be_in_identifier
+        bool old_text_must_be_unquoted,
+        bool old_text_must_be_quoted,
+        bool old_text_must_be_in_identifier
         )
     {
         string
@@ -4598,9 +4598,9 @@ class SCRIPT
                     Unquote( post_line_index_expression_argument, file ),
                     Unquote( old_text_argument, file ),
                     Unquote( new_text_argument, file ),
-                    it_must_be_unquoted,
-                    it_must_be_quoted,
-                    it_must_be_in_identifier
+                    old_text_must_be_unquoted,
+                    old_text_must_be_quoted,
+                    old_text_must_be_in_identifier
                     );
             }
         }
@@ -7306,13 +7306,13 @@ string ReplaceText(
     string text,
     string old_text,
     string new_text,
-    bool it_must_be_unquoted,
-    bool it_must_be_quoted,
-    bool it_must_be_in_identifier
+    bool old_text_must_be_unquoted,
+    bool old_text_must_be_quoted,
+    bool old_text_must_be_in_identifier
     )
 {
     bool
-        it_is_in_identifier,
+        character_is_in_identifier,
         it_is_quoted;
     char
         character,
@@ -7326,7 +7326,7 @@ string ReplaceText(
     {
         quote_character = 0;
         it_is_quoted = false;
-        it_is_in_identifier = false;
+        character_is_in_identifier = false;
         prior_character = 0;
         character_index = 0;
 
@@ -7334,15 +7334,15 @@ string ReplaceText(
         {
             if ( text[ character_index .. character_index + old_text.length ] == old_text )
             {
-                it_is_in_identifier
-                    = ( it_must_be_in_identifier
+                character_is_in_identifier
+                    = ( old_text_must_be_in_identifier
                         && !IsIdentifierCharacter( prior_character )
                         && ( character_index + old_text.length >= text.length
                              || !IsIdentifierCharacter( text[ character_index + old_text.length ] ) ) );
 
-                if ( ( !it_must_be_unquoted || !it_is_quoted )
-                     && ( !it_must_be_quoted || it_is_quoted )
-                     && ( !it_must_be_in_identifier || it_is_in_identifier ) )
+                if ( ( !old_text_must_be_unquoted || !it_is_quoted )
+                     && ( !old_text_must_be_quoted || it_is_quoted )
+                     && ( !old_text_must_be_in_identifier || character_is_in_identifier ) )
                 {
                     prior_character = text[ character_index + old_text.length.to!long() - 1 ];
 
@@ -7377,7 +7377,7 @@ string ReplaceText(
             }
             else
             {
-                if ( ( it_must_be_unquoted || it_must_be_quoted )
+                if ( ( old_text_must_be_unquoted || old_text_must_be_quoted )
                      && IsQuoteCharacter( character ) )
                 {
                     it_is_quoted = true;
