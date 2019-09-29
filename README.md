@@ -242,7 +242,7 @@ $OutputFolder
 ```
 %InputPath : input file path
 %InputFolder : input file folder
-%InputSubFolder : input file sub-folder 
+%InputSubFolder : input file sub-folder
 %InputName : input file name
 %InputBaseName : input file name without extension
 %InputExtension : input file extension
@@ -322,7 +322,7 @@ $OutputFolder
 
 ## Installation
 
-Install the [DMD 2 compiler](https://dlang.org/download.html).
+Install the [DMD 2 compiler](https://dlang.org/download.html) (choosing the MinGW setup option on Windows).
 
 Build the executable with the following command line :
 
