@@ -4116,10 +4116,10 @@ class SCRIPT
 
             foreach ( folder_entry; dirEntries( folder_path, file_name_filter, span_mode ) )
             {
-                if ( folder_entry.isFile()
-                     && ( folder_entry.name() in file_map ) is null )
+                if ( folder_entry.isFile
+                     && ( folder_entry.name in file_map ) is null )
                 {
-                    input_file_path = folder_entry.name();
+                    input_file_path = folder_entry.name;
                     output_file_path = OutputFolderPath ~ input_file_path[ InputFolderPath.length .. $ ];
 
                     file = new FILE();
