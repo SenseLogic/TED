@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="2108.4868"
-   height="2180.0271"
-   viewBox="0 0 2108.4868 2180.0271"
+   width="1918.845"
+   height="2456.9912"
+   viewBox="0 0 1918.845 2456.9912"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="ted.svg"
    inkscape:export-filename="/home/eric/data/WORK/PROJECT/TOOL/TED/LOGO/ted.png"
    inkscape:export-xdpi="90"
@@ -29,26 +29,26 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="162.34748"
-     inkscape:cy="863.08231"
+     inkscape:cx="75.744385"
+     inkscape:cy="1140.0466"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:window-width="3840"
-     inkscape:window-height="2136"
+     inkscape:window-height="2095"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="32"
      inkscape:window-maximized="1"
      fit-margin-top="100"
-     fit-margin-left="100"
-     fit-margin-right="100"
+     fit-margin-left="200"
+     fit-margin-right="200"
      fit-margin-bottom="100">
     <inkscape:grid
        type="xygrid"
        id="grid4166"
-       originx="-320.57749"
-       originy="-804.32728" />
+       originx="-407.1806"
+       originy="-527.36301" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -66,12 +66,12 @@
      inkscape:label="Calque 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-320.57751,1931.9923)">
+     transform="translate(-407.1806,1931.9923)">
     <g
        id="g4157"
-       transform="translate(131.89614,0)">
+       transform="translate(123.67827)">
       <g
-         transform="translate(502.92484,0)"
+         transform="translate(502.92484)"
          id="g4224">
         <path
            inkscape:connector-curvature="0"
@@ -124,8 +124,8 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot4147"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#3c35c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       transform="matrix(0.8428578,0,0,1.0114285,289.09334,-1994.6607)"><flowRegion
+       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#3c35c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(1.4860247,0,0,1.7832281,-533.13148,-3297.016)"><flowRegion
          id="flowRegion4149"><rect
            id="rect4151"
            width="2580"
@@ -134,5 +134,5 @@
            y="1649.7334"
            style="fill:#3c35c2;fill-opacity:1" /></flowRegion><flowPara
          id="flowPara4153"
-         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:500px;font-family:Orbitron;-inkscape-font-specification:'Orbitron Medium';text-align:center;text-anchor:middle;fill:#3c35c2;fill-opacity:1">Ted</flowPara></flowRoot>  </g>
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:500px;line-height:1.25;font-family:Orbitron;-inkscape-font-specification:'Orbitron Medium';text-align:center;text-anchor:middle;fill:#3c35c2;fill-opacity:1">Ted</flowPara></flowRoot>  </g>
 </svg>
