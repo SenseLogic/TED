@@ -1,12 +1,12 @@
-![](https://github.com/senselogic/BATCHED/blob/master/LOGO/batched.png)
+![](https://github.com/senselogic/TED/blob/master/LOGO/ted.png)
 
-# Batched
+# Ted
 
 Batch text file editor.
 
 ## Description
 
-Batched allows to conditionally apply text editing operations on several files at once.
+Ted allows to conditionally apply text editing operations on several files at once.
 
 ## Sample
 
@@ -327,13 +327,13 @@ Install the [DMD 2 compiler](https://dlang.org/download.html) (using the MinGW s
 Build the executable with the following command line :
 
 ```bash
-dmd -m64 batched.d
+dmd -m64 ted.d
 ```
 
 ## Command line
 
 ```bash
-batched [options] script_file.batched
+ted [options] script_file.ted
 ```
 
 ### Options
@@ -346,13 +346,13 @@ batched [options] script_file.batched
 ### Examples
 
 ```bash
-batched --verbose --preview script_file.batched
+ted --verbose --preview script_file.ted
 ```
 
 Test the changes, showing 3 neighboring lines around each fixed line.
 
 ```bash
-batched script_file.batched
+ted script_file.ted
 ```
 
 Apply the changes to the files.
