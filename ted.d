@@ -1,21 +1,21 @@
 /*
-    This file is part of the Batched distribution.
+    This file is part of the Ted distribution.
 
-    https://github.com/senselogic/BATCHED
+    https://github.com/senselogic/TED
 
     Copyright (C) 2017 Eric Pelzer (ecstatic.coder@gmail.com)
 
-    Batched is free software: you can redistribute it and/or modify
+    Ted is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, version 3.
 
-    Batched is distributed in the hope that it will be useful,
+    Ted is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Batched.  If not, see <http://www.gnu.org/licenses/>.
+    along with Ted.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // -- IMPORTS
@@ -7554,7 +7554,7 @@ void main(
     else
     {
         writeln( "Usage :" );
-        writeln( "    batched [options] script_file.batched" );
+        writeln( "    ted [options] script_file.ted" );
         writeln( "Options :" );
         writeln( "    --dump line_count" );
         writeln( "    --verbose" );
@@ -7660,8 +7660,8 @@ void main(
         writeln( "    Execute[!] script_file_path {arguments}" );
         writeln( "    Do[!] shell_command {arguments}");
         writeln( "Examples :" );
-        writeln( "    batched --dump 3 --verbose --print --preview script_file.batched" );
-        writeln( "    batched script_file.batched" );
+        writeln( "    ted --dump 3 --verbose --print --preview script_file.ted" );
+        writeln( "    ted script_file.ted" );
 
         Abort( "Invalid arguments : " ~ argument_array.to!string() );
     }

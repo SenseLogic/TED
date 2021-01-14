@@ -1,7 +1,7 @@
 #!/bin/sh
 set -x
-../batched --verbose test.batched
-../batched --verbose test_2.batched
-../batched --verbose test_3.batched
-../batched --verbose test_4.batched
-../batched --verbose test_5.batched
+../ted --verbose test.ted
+../ted --verbose test_2.ted
+../ted --verbose test_3.ted
+../ted --verbose test_4.ted
+../ted --verbose test_5.ted

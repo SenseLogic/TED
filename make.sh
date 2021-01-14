@@ -1,4 +1,4 @@
 #!/bin/sh
 set -x
-dmd -m64 batched.d
+dmd -m64 ted.d
 rm *.o
