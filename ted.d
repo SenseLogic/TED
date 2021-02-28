@@ -23,7 +23,7 @@
 import core.stdc.stdlib : exit;
 import std.array : replicate;
 import std.conv : to;
-import std.file : copy, dirEntries, exists, mkdirRecurse, readText, rename, remove, write, FileException, SpanMode;
+import std.file : copy, dirEntries, exists, mkdirRecurse, readText, rename, remove, write, SpanMode;
 import std.path : globMatch;
 import std.process : execute;
 import std.regex : matchFirst, regex, replaceAll, Captures, Regex;
@@ -360,7 +360,7 @@ class FILE
             {
                 file_text = input_file_path.readText().replace( "\r", "" );
             }
-            catch ( FileException file_exception )
+            catch ( Exception exception )
             {
                 Abort( "Can't read file : " ~ InputPath );
             }
@@ -475,7 +475,7 @@ class FILE
             {
                 OutputPath.write( file_text );
             }
-            catch ( FileException file_exception )
+            catch ( Exception exception )
             {
                 Abort( "Can't write file : " ~ OutputPath );
             }
@@ -3804,7 +3804,7 @@ class SCRIPT
                 {
                     folder_path.mkdirRecurse();
                 }
-                catch ( FileException file_exception )
+                catch ( Exception exception )
                 {
                     Abort( "Can't create folder : " ~ folder_path );
                 }
@@ -3960,7 +3960,7 @@ class SCRIPT
                     {
                         remove( Unquote( file_path_argument, file ) );
                     }
-                    catch ( FileException file_exception )
+                    catch ( Exception exception )
                     {
                         Abort( "Can't remove file" );
                     }
@@ -3975,7 +3975,7 @@ class SCRIPT
                 {
                     remove( Unquote( file_path_argument ) );
                 }
-                catch ( FileException file_exception )
+                catch ( Exception exception )
                 {
                     Abort( "Can't remove file" );
                 }
@@ -4006,7 +4006,7 @@ class SCRIPT
                         Unquote( output_file_path_argument, file )
                         );
                 }
-                catch ( FileException file_exception )
+                catch ( Exception exception )
                 {
                     Abort( "Can't move file" );
                 }
@@ -4021,7 +4021,7 @@ class SCRIPT
                     Unquote( output_file_path_argument )
                     );
             }
-            catch ( FileException file_exception )
+            catch ( Exception exception )
             {
                 Abort( "Can't move file" );
             }
@@ -4051,7 +4051,7 @@ class SCRIPT
                         Unquote( output_file_path_argument, file )
                         );
                 }
-                catch ( FileException file_exception )
+                catch ( Exception exception )
                 {
                     Abort( "Can't copy file" );
                 }
@@ -4066,7 +4066,7 @@ class SCRIPT
                     Unquote( output_file_path_argument )
                     );
             }
-            catch ( FileException file_exception )
+            catch ( Exception exception )
             {
                 Abort( "Can't copy file" );
             }
@@ -7434,7 +7434,7 @@ void SplitFilePath(
 
 void SplitFileName(
     string file_name,
-    ref string base_name,
+    ref string file_label,
     ref string file_extension
     )
 {
@@ -7445,12 +7445,12 @@ void SplitFileName(
 
     if ( dot_character_index >= 0 )
     {
-        base_name = file_name[ 0 .. dot_character_index ];
+        file_label = file_name[ 0 .. dot_character_index ];
         file_extension = file_name[ dot_character_index .. $ ];
     }
     else
     {
-        base_name = file_name;
+        file_label = file_name;
         file_extension = "";
     }
 }
