@@ -6974,7 +6974,7 @@ bool IsUpperCaseLetter(
 
 // ~~
 
-bool IsSetter(
+bool IsLetter(
     dchar character
     )
 {
@@ -7144,7 +7144,7 @@ string GetCamelCaseText(
     foreach ( dchar character; text )
     {
         if ( character.IsLowerCaseLetter()
-             && !prior_character.IsSetter() )
+             && !prior_character.IsLetter() )
         {
             camel_case_text ~= character.GetUpperCaseCharacter();
         }
