@@ -7166,31 +7166,54 @@ string GetSnakeCaseText(
     )
 {
     dchar
+        character,
+        next_character,
         prior_character;
+    dstring
+        character_array;
+    long
+        character_index;
     string
         snake_case_text;
+
+    character_array = text.replace( '-', '_' ).to!dstring();
 
     snake_case_text = "";
     prior_character = 0;
 
-    foreach ( dchar character; text )
+    for ( character_index = 0;
+          character_index < character_array.length;
+          ++character_index )
     {
+        character = character_array[ character_index ];
+
+        if ( character_index + 1 < character_array.length )
+        {
+            next_character = character_array[ character_index + 1 ];
+        }
+        else
+        {
+            next_character = 0;
+        }
+
         if ( ( prior_character.IsLowerCaseLetter()
                && ( character.IsUpperCaseLetter()
                     || character.IsDigit() ) )
              || ( prior_character.IsDigit()
                   && ( character.IsLowerCaseLetter()
-                       || character.IsUpperCaseLetter() ) ) )
+                       || character.IsUpperCaseLetter() ) )
+             || ( prior_character.IsUpperCaseLetter()
+                  && character.IsUpperCaseLetter()
+                  && next_character.IsLowerCaseLetter() ) )
         {
             snake_case_text ~= '_';
         }
 
         snake_case_text ~= character;
-
         prior_character = character;
     }
 
-    return snake_case_text;
+    return snake_case_text.GetLowerCaseText();
 }
 
 // ~~
