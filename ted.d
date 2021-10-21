@@ -467,13 +467,17 @@ class FILE
 
         file_text = LineArray.Join();
 
-        writeln( "Writing file : ", OutputPath );
-
         if ( !PreviewOptionIsEnabled )
         {
             try
             {
-                OutputPath.write( file_text );
+                if ( !OutputPath.exists()
+                     || OutputPath.readText() != file_text )
+                {
+                    writeln( "Writing file : ", OutputPath );
+
+                    OutputPath.write( file_text );
+                }
             }
             catch ( Exception exception )
             {
@@ -592,12 +596,13 @@ class FILE
         )
     {
         bool
+            file_path_was_printed,
             line_has_changed;
         long
             changed_line_index,
             line_offset;
 
-        PrintFilePath();
+        file_path_was_printed = false;
 
         foreach ( line_index, ref line; LineArray )
         {
@@ -619,6 +624,13 @@ class FILE
 
             if ( line_has_changed )
             {
+                if ( !file_path_was_printed )
+                {
+                    PrintFilePath();
+
+                    file_path_was_printed = true;
+                }
+
                 if ( LineHasChangedArray[ line_index ] )
                 {
                     writeln( "    *", line_index, "* ", line );
